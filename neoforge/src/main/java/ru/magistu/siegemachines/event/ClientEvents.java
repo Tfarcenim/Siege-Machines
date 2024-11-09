@@ -1,9 +1,9 @@
 package ru.magistu.siegemachines.event;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.KeyBindings;
 import ru.magistu.siegemachines.entity.IReloading;
 import ru.magistu.siegemachines.entity.machine.Machine;

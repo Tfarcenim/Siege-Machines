@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.item;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -10,7 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.*;
 import ru.magistu.siegemachines.client.renderer.model.MachineItemModel;
 import ru.magistu.siegemachines.entity.EntityTypes;

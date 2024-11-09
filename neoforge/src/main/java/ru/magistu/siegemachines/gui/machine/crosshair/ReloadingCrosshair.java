@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ReloadingCrosshair extends Crosshair
 {
-    //public static ResourceLocation TYPE = new ResourceLocation(SiegeMachines.ID, "siege_machine");
+    //public static ResourceLocation TYPE = new ResourceLocation(SiegeMachinesForge.ID, "siege_machine");
     public int x;
     public int y;
 

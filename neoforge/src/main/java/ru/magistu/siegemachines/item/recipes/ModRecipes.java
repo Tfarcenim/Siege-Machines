@@ -1,7 +1,7 @@
 package ru.magistu.siegemachines.item.recipes;
 
-import net.minecraft.world.item.crafting.RecipeType;
 import ru.magistu.siegemachines.SiegeMachines;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;

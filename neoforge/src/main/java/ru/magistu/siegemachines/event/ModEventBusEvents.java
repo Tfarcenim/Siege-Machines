@@ -1,8 +1,7 @@
 package ru.magistu.siegemachines.event;
 
-import net.minecraftforge.eventbus.api.EventPriority;
 import ru.magistu.siegemachines.SiegeMachines;
-import ru.magistu.siegemachines.config.SpecsConfig;
+import net.minecraftforge.eventbus.api.EventPriority;
 import ru.magistu.siegemachines.entity.EntityTypes;
 import ru.magistu.siegemachines.entity.machine.*;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;

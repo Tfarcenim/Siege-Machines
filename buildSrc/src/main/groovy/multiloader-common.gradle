@@ -49,6 +49,11 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+
+    maven {//geckolib
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
+
 }
 
 // Declare capabilities on the outgoing configurations.

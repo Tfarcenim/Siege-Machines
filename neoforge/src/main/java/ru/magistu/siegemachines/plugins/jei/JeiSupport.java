@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.plugins.jei;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.recipe.RecipeType;
@@ -8,7 +9,6 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.item.recipes.ModRecipes;
 import ru.magistu.siegemachines.item.recipes.SiegeWorkbenchRecipe;
 

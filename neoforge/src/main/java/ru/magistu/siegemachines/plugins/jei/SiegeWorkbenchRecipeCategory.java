@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.plugins.jei;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -11,7 +12,6 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.block.ModBlocks;
 import ru.magistu.siegemachines.item.recipes.CountIngredient;
 import ru.magistu.siegemachines.item.recipes.SiegeWorkbenchRecipe;

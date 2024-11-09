@@ -5,7 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [],
   "client": [
-    "MixinTitleScreen"
+    "ru.magistu.siegemachines.mixin.MixinTitleScreen"
   ],
   "server": [],
   "injectors": {

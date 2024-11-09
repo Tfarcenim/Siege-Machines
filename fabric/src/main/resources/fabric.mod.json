@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-            "com.example.examplemod.ExampleMod"
+          "ru.magistu.siegemachines.ExampleMod"
         ]
     },
     "mixins": [

@@ -1,8 +1,8 @@
 package ru.magistu.siegemachines.client.renderer;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.model.GiantArrowModel;
 import ru.magistu.siegemachines.entity.projectile.GiantArrow;
 import net.minecraft.client.renderer.MultiBufferSource;

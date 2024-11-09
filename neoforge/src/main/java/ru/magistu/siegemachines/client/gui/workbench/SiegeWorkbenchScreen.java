@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.client.gui.workbench;
 
+import ru.magistu.siegemachines.SiegeMachines;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -10,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import ru.magistu.siegemachines.SiegeMachines;
 
 @OnlyIn(Dist.CLIENT)
 public class SiegeWorkbenchScreen extends AbstractContainerScreen<SiegeWorkbenchContainer>
