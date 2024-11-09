@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.client.gui.machine;
 
+import net.neoforged.neoforge.items.IItemHandler;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
@@ -8,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import ru.magistu.siegemachines.client.gui.ModMenuTypes;
 
@@ -20,7 +20,7 @@ public class MachineContainer extends AbstractContainerMenu
 	private Machine machine;
 	int x, y, z;
 	private IItemHandler internal;
-	private boolean bound = false;
+	private final boolean bound = false;
 
 
 	public MachineContainer(final int id, final Inventory inv, final Machine machine)
@@ -45,14 +45,10 @@ public class MachineContainer extends AbstractContainerMenu
 			this.addSlot(new Slot(inv, col, 8 + col * 18, 142));
 		}
 
-		for (int row = 0; row < 1; row++)
-		{
-			for (int col = 0; col < 9; col++)
-			{
-				this.addSlot(new Slot(machine.inventory, col + row * 9, 8 + col * 18, 18 + row * 18));
-			}
-		}
-	}
+        for (int col = 0; col < 9; col++) {
+            this.addSlot(new Slot(machine.inventory, col, 8 + col * 18, 18));
+        }
+    }
 
 	public MachineContainer(final int id, final Inventory inv, final FriendlyByteBuf data)
     {

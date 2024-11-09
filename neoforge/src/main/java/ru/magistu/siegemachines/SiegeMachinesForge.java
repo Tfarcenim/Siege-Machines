@@ -29,11 +29,10 @@ public class SiegeMachinesForge {
 
 
     public SiegeMachinesForge(IEventBus bus, Dist dist) {
-        bus.addListener(this::doClientStuff);
 
         EntityTypes.register(bus);
         SoundTypes.register(bus);
-        ModMenuTypes.register(bus);
+        ModMenuTypes.register();
         ModBlocks.register(bus);
         ModItems.register(bus);
         ModRecipes.register(bus);
