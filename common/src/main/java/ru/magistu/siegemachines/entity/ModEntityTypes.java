@@ -5,16 +5,15 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.entity.machine.*;
-import ru.magistu.siegemachines.entity.projectile.Cannonball;
-import ru.magistu.siegemachines.entity.projectile.GiantArrow;
-import ru.magistu.siegemachines.entity.projectile.GiantStone;
-import ru.magistu.siegemachines.entity.projectile.Stone;
-import net.minecraft.resources.ResourceLocation;
+import ru.magistu.siegemachines.item.Cannonball;
+import ru.magistu.siegemachines.item.GiantArrow;
+import ru.magistu.siegemachines.item.GiantStone;
+import ru.magistu.siegemachines.item.Stone;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
-public class EntityTypes
+public class ModEntityTypes
 {
     public static final DeferredRegister<EntityType<?>> DEFERRED_REGISTER = DeferredRegister.create(SiegeMachines.ID, Registries.ENTITY_TYPE);
 

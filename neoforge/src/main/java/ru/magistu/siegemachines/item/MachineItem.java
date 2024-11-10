@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.item;
 
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -29,20 +30,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.fluids.IFluidBlock;
 import org.jetbrains.annotations.NotNull;
 import ru.magistu.siegemachines.client.KeyBindings;
 import ru.magistu.siegemachines.client.renderer.MachineItemGeoRenderer;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import ru.magistu.siegemachines.entity.machine.MachineType;
 import ru.magistu.siegemachines.entity.projectile.ProjectileBuilder;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -50,9 +47,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class MachineItem<T extends Machine> extends Item implements IAnimatable
-{
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+public class MachineItem<T extends Machine> extends Item implements GeoItem {
+    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
     private final Supplier<EntityType<T>> entitytype;
     private final Supplier<MachineType> machinetype;
@@ -64,15 +60,13 @@ public class MachineItem<T extends Machine> extends Item implements IAnimatable
         this.machinetype = machinetype;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public MachineItemGeoRenderer<T> getRenderer()
     {
         return null;
     }
-    
+
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag)
-    {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (KeyBindings.getUseKey(this.machinetype.get()) != null)
             tooltip.add(Component.translatable(SiegeMachines.ID + ".usage", KeyBindings.getUseKey(this.machinetype.get()).getKey().getDisplayName()).withStyle(ChatFormatting.BLUE));
 
@@ -92,7 +86,7 @@ public class MachineItem<T extends Machine> extends Item implements IAnimatable
     }
 
     @Override
-    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {//todo
         super.initializeClient(consumer);
         consumer.accept(new IClientItemExtensions()
         {
@@ -220,8 +214,8 @@ public class MachineItem<T extends Machine> extends Item implements IAnimatable
             return InteractionResultHolder.success(itemstack);
         
         BlockPos blockpos = raytraceresult.getBlockPos();
-        if (!(level.getBlockState(blockpos).getBlock() instanceof IFluidBlock))
-            return InteractionResultHolder.pass(itemstack);
+      //  if (!(level.getBlockState(blockpos).getBlock() instanceof IFluidBlock))
+      //      return InteractionResultHolder.pass(itemstack);
         
         if (level.mayInteract(player, blockpos) && player.mayUseItemAt(blockpos, raytraceresult.getDirection(), itemstack))
         {
@@ -259,14 +253,12 @@ public class MachineItem<T extends Machine> extends Item implements IAnimatable
     }
 
     @Override
-    public void registerControllers(AnimationData data)
-    {
+    public void registerControllers(AnimatableManager.ControllerRegistrar data) {
 
     }
 
     @Override
-    public AnimationFactory getFactory()
-    {
-        return this.factory;
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return factory;
     }
 }

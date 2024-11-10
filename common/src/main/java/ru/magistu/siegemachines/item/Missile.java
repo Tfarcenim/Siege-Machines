@@ -1,8 +1,7 @@
-package ru.magistu.siegemachines.entity.projectile;
+package ru.magistu.siegemachines.item;
 
 import com.mojang.math.Vector3d;
 import net.minecraft.world.level.ExplosionDamageCalculator;
-import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;

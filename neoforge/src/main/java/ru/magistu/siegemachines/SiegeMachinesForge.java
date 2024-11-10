@@ -5,10 +5,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import ru.magistu.siegemachines.block.ModBlocks;
 import ru.magistu.siegemachines.client.ClientProxyForge;
-import ru.magistu.siegemachines.client.SoundTypes;
 import ru.magistu.siegemachines.config.SpecsConfig;
 import ru.magistu.siegemachines.item.recipes.ModRecipes;
-import ru.magistu.siegemachines.entity.EntityTypes;
+import ru.magistu.siegemachines.entity.ModEntityTypes;
 import ru.magistu.siegemachines.client.gui.ModMenuTypes;
 import ru.magistu.siegemachines.item.ModItems;
 import ru.magistu.siegemachines.network.PacketHandler;
@@ -30,12 +29,12 @@ public class SiegeMachinesForge {
 
     public SiegeMachinesForge(IEventBus bus, Dist dist) {
 
-        EntityTypes.register(bus);
-        SoundTypes.register(bus);
+        ModEntityTypes.register();
+        SoundTypes.register();
         ModMenuTypes.register();
-        ModBlocks.register(bus);
-        ModItems.register(bus);
-        ModRecipes.register(bus);
+        ModBlocks.register();
+        ModItems.register();
+        ModRecipes.register();
         SpecsConfig.register();
 
         PacketHandler.init();

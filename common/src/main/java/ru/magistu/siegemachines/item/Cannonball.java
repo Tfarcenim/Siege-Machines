@@ -1,11 +1,10 @@
-package ru.magistu.siegemachines.entity.projectile;
+package ru.magistu.siegemachines.item;
 
-import com.mojang.math.Vector3d;
-import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+import org.joml.Vector3d;
 
 public class Cannonball extends Missile
 {

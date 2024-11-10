@@ -1,4 +1,4 @@
-package ru.magistu.siegemachines.entity.projectile;
+package ru.magistu.siegemachines.item;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

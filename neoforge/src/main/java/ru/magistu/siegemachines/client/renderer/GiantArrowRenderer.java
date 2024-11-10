@@ -4,7 +4,7 @@ import ru.magistu.siegemachines.SiegeMachines;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import ru.magistu.siegemachines.client.renderer.model.GiantArrowModel;
-import ru.magistu.siegemachines.entity.projectile.GiantArrow;
+import ru.magistu.siegemachines.item.GiantArrow;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
