@@ -146,7 +146,7 @@ public abstract class ShootingMachine extends Machine implements IReloading
     public void updateMachineRender()
 	{
         super.updateMachineRender();
-		if (!this.level.isClientSide())
+		if (!this.level().isClientSide())
 		{
             for (int i = 0; i < this.inventory.getContainerSize(); ++i)
             {

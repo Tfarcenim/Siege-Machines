@@ -3,13 +3,11 @@ package ru.magistu.siegemachines.item;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
-import net.neoforged.fml.common.Mod;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import ru.magistu.siegemachines.client.renderer.*;
 import ru.magistu.siegemachines.client.renderer.model.MachineItemModel;
 import ru.magistu.siegemachines.entity.EntityTypes;
 import ru.magistu.siegemachines.entity.machine.*;

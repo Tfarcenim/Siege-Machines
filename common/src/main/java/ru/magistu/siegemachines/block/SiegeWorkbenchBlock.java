@@ -2,7 +2,6 @@ package ru.magistu.siegemachines.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -13,9 +12,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CraftingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import ru.magistu.siegemachines.client.gui.workbench.SiegeWorkbenchContainer;
+import ru.magistu.siegemachines.gui.workbench.SiegeWorkbenchContainer;
 
 public class SiegeWorkbenchBlock extends CraftingTableBlock
 {
@@ -34,7 +32,7 @@ public class SiegeWorkbenchBlock extends CraftingTableBlock
         }
         else
         {
-            NetworkHooks.openScreen((ServerPlayer) player, this.getMenuProvider(blockstate, level, blockpos));
+            player.openMenu(this.getMenuProvider(blockstate, level, blockpos));
             return InteractionResult.CONSUME;
         }
     }

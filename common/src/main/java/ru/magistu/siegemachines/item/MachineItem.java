@@ -1,6 +1,6 @@
 package ru.magistu.siegemachines.item;
 
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.minecraft.world.item.component.CustomData;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -48,7 +48,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MachineItem<T extends Machine> extends Item implements GeoItem {
-    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache factory = GeckoLibUtil  .createInstanceCache(this);
 
     private final Supplier<EntityType<T>> entitytype;
     private final Supplier<MachineType> machinetype;
@@ -66,7 +66,7 @@ public class MachineItem<T extends Machine> extends Item implements GeoItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
         if (KeyBindings.getUseKey(this.machinetype.get()) != null)
             tooltip.add(Component.translatable(SiegeMachines.ID + ".usage", KeyBindings.getUseKey(this.machinetype.get()).getKey().getDisplayName()).withStyle(ChatFormatting.BLUE));
 
@@ -238,7 +238,7 @@ public class MachineItem<T extends Machine> extends Item implements GeoItem {
     }
 
     @SuppressWarnings("unchecked")
-    public EntityType<T> getType(@Nullable CompoundTag nbt)
+    public EntityType<T> getType(@Nullable CustomData nbt)
     {
         EntityType<T> defaulttype = this.entitytype.get();
 

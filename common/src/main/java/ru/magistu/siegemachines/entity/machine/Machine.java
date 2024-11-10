@@ -3,6 +3,8 @@ package ru.magistu.siegemachines.entity.machine;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.component.CustomData;
 import ru.magistu.siegemachines.ModTags;
 import ru.magistu.siegemachines.SiegeMachines;
@@ -153,9 +155,8 @@ public abstract class Machine extends Mob implements MenuProvider
 
     @Nullable
 	@Override
-	public LivingEntity getControllingPassenger()
-    {
-		return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+	public LivingEntity getControllingPassenger() {
+		return this.getFirstPassenger() instanceof LivingEntity livingentity ? livingentity : super.getControllingPassenger();
 	}
 
 	@Override
@@ -180,9 +181,8 @@ public abstract class Machine extends Mob implements MenuProvider
 	}
 
 	@Override
-	protected void dropCustomDeathLoot(DamageSource p_213333_1_, int p_213333_2_, boolean p_213333_3_)
-	{
-		super.dropCustomDeathLoot(p_213333_1_, p_213333_2_, p_213333_3_);
+	protected void dropEquipment() {
+		super.dropEquipment();
 		this.inventory.items.forEach(this::spawnAtLocation);
 		this.inventory.clearContent();
 	}
@@ -291,7 +291,7 @@ public abstract class Machine extends Mob implements MenuProvider
 
 	public void updateMachineRender()
 	{
-		if (!this.level.isClientSide())
+		if (!this.level().isClientSide())
 		{
 			PacketHandler.sendPacketToAllInArea(new PacketMachine(
 					this.getId(),
@@ -374,15 +374,15 @@ public abstract class Machine extends Mob implements MenuProvider
 	public abstract void useRealise();
 
 	@Override
-	public MachineContainer createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
-		return new MachineContainer(id, inv, this);
+	public ChestMenu createMenu(int id, @NotNull Inventory inv, @NotNull Player player) {
+		return new ChestMenu(MenuType.GENERIC_9x1,id, inv, inventory,1);
 	}
 
 	public void openInventoryGui() {
 		Entity passenger = this.getControllingPassenger();
-		if (passenger instanceof ServerPlayer) {
+		if (passenger instanceof ServerPlayer serverPlayer) {
 			this.stopRiding();
-			NetworkHooks.openScreen((ServerPlayer) passenger, this, this.blockPosition());
+			serverPlayer.openMenu((ServerPlayer) passenger, this, this.blockPosition());
 		}
 	}
 
