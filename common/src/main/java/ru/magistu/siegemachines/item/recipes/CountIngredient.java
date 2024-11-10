@@ -12,7 +12,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.common.util.Lazy;
+import org.apache.logging.log4j.util.Lazy;
 
 /**
  * The CountIngredient is a special kind of ingredient which supports addition of a count field.
@@ -79,7 +79,7 @@ public class CountIngredient
     public static CountIngredient fromNetwork(FriendlyByteBuf buffer) {
         Ingredient ingredient = Ingredient.fromNetwork(buffer);
         int count = buffer.readInt();
-        return new CountIngredient(Lazy.of(() -> ingredient), count);
+        return new CountIngredient(Lazy.lazy(() -> ingredient), count);
     }
 
     public void toNetwork(FriendlyByteBuf buffer) {

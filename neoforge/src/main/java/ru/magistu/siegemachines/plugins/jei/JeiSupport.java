@@ -9,7 +9,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
-import ru.magistu.siegemachines.item.recipes.ModRecipes;
+import ru.magistu.siegemachines.item.recipes.ModRecipeSerializers;
 import ru.magistu.siegemachines.item.recipes.SiegeWorkbenchRecipe;
 
 import java.util.List;
@@ -31,7 +31,7 @@ public class JeiSupport implements IModPlugin {
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
 		RecipeManager rm = Objects.requireNonNull(Minecraft.getInstance().level).getRecipeManager();
-		List<SiegeWorkbenchRecipe> recipes = rm.getAllRecipesFor(ModRecipes.SIEGE_WORKBENCH_RECIPE);
+		List<SiegeWorkbenchRecipe> recipes = rm.getAllRecipesFor(ModRecipeSerializers.SIEGE_WORKBENCH_RECIPE);
 		registration.addRecipes(new RecipeType<>(SiegeWorkbenchRecipeCategory.UID, SiegeWorkbenchRecipe.class), recipes);
 	}
 }

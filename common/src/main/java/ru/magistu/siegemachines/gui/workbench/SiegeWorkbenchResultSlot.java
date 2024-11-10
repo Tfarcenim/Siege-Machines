@@ -1,4 +1,4 @@
-package ru.magistu.siegemachines.client.gui.workbench;
+package ru.magistu.siegemachines.gui.workbench;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -8,7 +8,7 @@ import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import ru.magistu.siegemachines.item.recipes.ModRecipes;
+import ru.magistu.siegemachines.item.recipes.ModRecipeSerializers;
 
 public class SiegeWorkbenchResultSlot extends Slot {
     private final CraftingContainer craftSlots;
@@ -72,7 +72,7 @@ public class SiegeWorkbenchResultSlot extends Slot {
         this.checkTakeAchievements(stack);
         net.minecraftforge.common.ForgeHooks.setCraftingPlayer(player);
         RecipeManager manager = player.level.getRecipeManager();
-        NonNullList<ItemStack> nonnulllist = manager.getRemainingItemsFor(ModRecipes.SIEGE_WORKBENCH_RECIPE, craftSlots, player.level);
+        NonNullList<ItemStack> nonnulllist = manager.getRemainingItemsFor(ModRecipeSerializers.SIEGE_WORKBENCH_RECIPE, craftSlots, player.level);
         net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
         for (int i = 0; i < nonnulllist.size(); ++i) {
             ItemStack itemstack = this.craftSlots.getItem(i);

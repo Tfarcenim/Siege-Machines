@@ -3,7 +3,6 @@ package ru.magistu.siegemachines.gui.workbench;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import ru.magistu.siegemachines.block.ModBlocks;
-import ru.magistu.siegemachines.item.recipes.ModRecipes;
+import ru.magistu.siegemachines.item.recipes.ModRecipeSerializers;
 import ru.magistu.siegemachines.item.recipes.SiegeWorkbenchRecipe;
 import ru.magistu.siegemachines.gui.ModMenuTypes;
 
@@ -25,7 +24,7 @@ public class SiegeWorkbenchContainer extends AbstractContainerMenu
     private final ContainerLevelAccess access;
     private final Player player;
 
-    public SiegeWorkbenchContainer(int id, Inventory inventory, FriendlyByteBuf buffer)
+    public SiegeWorkbenchContainer(int id, Inventory inventory)
     {
         this(id, inventory, ContainerLevelAccess.NULL);
     }
@@ -65,7 +64,7 @@ public class SiegeWorkbenchContainer extends AbstractContainerMenu
         if (!level.isClientSide) {
             ServerPlayer serverplayer = (ServerPlayer)player;
             ItemStack itemstack = ItemStack.EMPTY;
-            Optional<SiegeWorkbenchRecipe> optional = level.getServer().getRecipeManager().getRecipeFor(ModRecipes.SIEGE_WORKBENCH_RECIPE, craftingcontainer, level);
+            Optional<SiegeWorkbenchRecipe> optional = level.getServer().getRecipeManager().getRecipeFor(ModRecipeSerializers.SIEGE_WORKBENCH_RECIPE, craftingcontainer, level);
             if (optional.isPresent()) {
                 SiegeWorkbenchRecipe craftingrecipe = optional.get();
                 if (resultcontainer.setRecipeUsed(level, serverplayer, craftingrecipe)) {

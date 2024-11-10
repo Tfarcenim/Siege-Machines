@@ -17,11 +17,11 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import ru.magistu.siegemachines.client.gui.workbench.SiegeWorkbenchContainer;
 
-public class SiegeWorkbench extends CraftingTableBlock
+public class SiegeWorkbenchBlock extends CraftingTableBlock
 {
     private static final Component CONTAINER_TITLE = Component.translatable("container.crafting");
 
-    public SiegeWorkbench(Properties p_i48422_1_)
+    public SiegeWorkbenchBlock(Properties p_i48422_1_)
     {
         super(p_i48422_1_);
     }

@@ -1,13 +1,11 @@
 package ru.magistu.siegemachines.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class SpecsConfig
 {
-    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SPEC;
+    public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec SPEC;
 
     public static final SiegeMachineSpecs MORTAR;
     public static final SiegeMachineSpecs CULVERIN;
@@ -44,10 +42,5 @@ public final class SpecsConfig
         BUILDER.pop();
         
         SPEC = BUILDER.build();
-    }
-    
-    public static void register()
-    {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SPEC, "siege-machines-specs.toml");
     }
 }

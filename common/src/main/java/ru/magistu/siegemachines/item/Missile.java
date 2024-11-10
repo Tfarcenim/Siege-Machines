@@ -1,13 +1,11 @@
 package ru.magistu.siegemachines.item;
 
-import com.mojang.math.Vector3d;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -29,8 +27,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3d;
 
 import javax.annotation.Nullable;
 
@@ -59,12 +57,6 @@ public abstract class Missile extends ThrowableItemProjectile
 	}
 
 	@Override
-	public @NotNull Packet<?> getAddEntityPacket()
-	{
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
-
-	@Override
 	public void onHit(HitResult result)
 	{
 		float f = 2.0F;
@@ -90,7 +82,7 @@ public abstract class Missile extends ThrowableItemProjectile
 				damage -= (1.0f - this.type.armorpiercing) * (damage - CombatRules.getDamageAfterAbsorb(damage, 0, 0));
 			}
 
-			if (!this.level.isClientSide() && this.type.explosive)
+			if (!this.level().isClientSide() && this.type.explosive)
 			{
 				this.explode(pos.x, pos.y, pos.z, 3.0F, Explosion.BlockInteraction.NONE);
 				this.remove(RemovalReason.KILLED);
@@ -108,7 +100,7 @@ public abstract class Missile extends ThrowableItemProjectile
 		{
 			BlockHitResult blockRTR = (BlockHitResult)result;
 			BlockPos blockpos = blockRTR.getBlockPos();
-			BlockState blockstate = this.level.getBlockState(blockpos);
+			BlockState blockstate = this.level().getBlockState(blockpos);
 			boolean smoothimpact = (blockstate == Blocks.SAND.defaultBlockState() ||
 					blockstate == Blocks.RED_SAND.defaultBlockState() ||
 					blockstate == Blocks.DIRT.defaultBlockState() ||

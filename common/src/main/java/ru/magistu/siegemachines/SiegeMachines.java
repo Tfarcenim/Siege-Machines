@@ -14,6 +14,10 @@ public class SiegeMachines {
     public static final String MOD_NAME = "ExampleMod";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
 
+    public static final int RENDER_UPDATE_RANGE = 128;
+    public static final int RENDER_UPDATE_TIME = 20;
+    public static final int RENDER_UPDATE_RANGE_SQR = RENDER_UPDATE_RANGE * RENDER_UPDATE_RANGE;
+
     public static void init() {
     }
 

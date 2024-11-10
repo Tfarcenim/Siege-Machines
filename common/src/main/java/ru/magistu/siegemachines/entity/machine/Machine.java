@@ -5,16 +5,14 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.item.component.CustomData;
 import ru.magistu.siegemachines.ModTags;
+import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.KeyBindings;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
@@ -29,9 +27,9 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.HoneyBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import ru.magistu.siegemachines.util.CartesianGeometry;
 
 import javax.annotation.Nullable;
 
@@ -131,139 +129,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		super.tick();
 	}
 
-	@Override
-	public boolean hurt(@NotNull DamageSource damagesource, float f) {
-		if (isInvulnerableTo(damagesource)) {
-			return false;
-		}
-		if (damagesource.getEntity() instanceof Player && this.getPassengers().isEmpty())
-		{
-			this.spawnAtLocation(this.getMachineItemWithData());
-			this.remove();
-			return false;
-		}
-		f = adjustDamage(damagesource, f);
-
-		this.noActionTime = 0;
-
-		this.animationSpeed = 1.5F;
-		boolean flag1 = true;
-		if ((float) this.invulnerableTime > 10.0F)
-		{
-			if (f <= this.lastHurt)
-			{
-				return false;
-			}
-
-			this.actuallyHurt(damagesource, f - this.lastHurt);
-			this.lastHurt = f;
-			flag1 = false;
-		}
-		else
-		{
-			this.lastHurt = f;
-			this.invulnerableTime = 20;
-			this.actuallyHurt(damagesource, f);
-			this.hurtDuration = 10;
-			this.hurtTime = this.hurtDuration;
-		}
-
-		this.hurtDir = 0.0F;
-		Entity entity1 = damagesource.getEntity();
-		if (entity1 != null)
-		{
-			if (entity1 instanceof LivingEntity)
-			{
-				this.setLastHurtByMob((LivingEntity) entity1);
-			}
-
-			if (entity1 instanceof Player)
-			{
-				this.lastHurtByPlayerTime = 1;
-				this.lastHurtByPlayer = (Player) entity1;
-			}
-
-			else if (entity1 instanceof TamableAnimal wolfEntity) {
-				if (wolfEntity.isTame()) {
-					this.lastHurtByPlayerTime = 100;
-					LivingEntity livingentity = wolfEntity.getOwner();
-
-					if (livingentity != null && livingentity.getType() == EntityType.PLAYER) {
-						this.lastHurtByPlayer = (Player) livingentity;
-					}
-
-					else {
-						this.lastHurtByPlayer = null;
-					}
-				}
-			}
-		}
-
-		if (flag1) {
-			if (damagesource instanceof EntityDamageSource && ((EntityDamageSource) damagesource).isThorns()) {
-				this.level.broadcastEntityEvent(this, (byte) 33);
-			}
-
-			else {
-				byte b0;
-
-				if (damagesource.isFire()) {
-					b0 = 37;
-				}
-
-				else if (damagesource == DamageSource.SWEET_BERRY_BUSH) {
-					b0 = 44;
-				}
-
-				else {
-					b0 = 2;
-				}
-
-				this.level().broadcastEntityEvent(this, b0);
-			}
-
-			this.markHurt();
-
-			if (entity1 != null)
-			{
-				double d1 = entity1.getX() - this.getX();
-
-				double d0;
-				for (d0 = entity1.getZ() - this.getZ(); d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D)
-				{
-					d1 = (Math.random() - Math.random()) * 0.01D;
-				}
-
-				this.hurtDir = (float) (Mth.atan2(d0, d1) * (double) (180F / (float) Math.PI) - (double) this.getYRot());
-			}
-			else
-			{
-				this.hurtDir = (float) ((int) (Math.random() * 2.0D) * 180);
-			}
-		}
-
-		if (this.isDeadOrDying())
-		{
-			SoundEvent soundevent = this.getDeathSound();
-			if (flag1 && soundevent != null)
-			{
-				this.playSound(soundevent, this.getSoundVolume(), this.getVoicePitch());
-			}
-
-			this.die(damagesource);
-		}
-		else if (flag1)
-		{
-			this.playHurtSound(damagesource);
-		}
-
-		if (entity1 instanceof ServerPlayer)
-		{
-			CriteriaTriggers.PLAYER_HURT_ENTITY.trigger((ServerPlayer) entity1, this, damagesource, f, f, false);
-		}
-
-		return true;
-	}
+	//hurt todo
 
 	@Override
 	@Nullable
@@ -292,12 +158,6 @@ public abstract class Machine extends Mob implements MenuProvider
 		return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
 	}
 
-    @Override
-	public boolean canRiderInteract()
-    {
-		return true;
-	}
-
 	@Override
 	public void addAdditionalSaveData(@NotNull CompoundTag nbt)
 	{
@@ -309,7 +169,7 @@ public abstract class Machine extends Mob implements MenuProvider
     		CompoundTag compoundnbt = new CompoundTag();
     		if (!itemstack.isEmpty())
 			{
-    			itemstack.save(compoundnbt);
+    			itemstack.save(registryAccess(),compoundnbt);
     		}
     		listnbt.add(compoundnbt);
     	}
@@ -327,72 +187,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		this.inventory.clearContent();
 	}
 
-    public void remove()
-    {
-        if (!this.dead)
-        {
-            this.dead = true;
-            this.level.broadcastEntityEvent(this, (byte)3);
-        }
-        super.remove(RemovalReason.DISCARDED);
-    }
-
-	@Override
-	public void handleEntityEvent(byte b) {
-		switch (b) {
-			case 2, 33, 36, 37, 44 -> {
-				boolean flag1 = b == 33;
-				boolean flag2 = b == 36;
-				boolean flag3 = b == 37;
-				boolean flag = b == 44;
-				this.animationSpeed = 1.5F;
-				this.invulnerableTime = 20;
-				this.hurtDuration = 10;
-				this.hurtTime = this.hurtDuration;
-				this.hurtDir = 0.0F;
-				if (flag1) {
-					this.playSound(SoundEvents.THORNS_HIT, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-				}
-				DamageSource damagesource;
-				if (flag3) {
-					damagesource = DamageSource.ON_FIRE;
-				} else if (flag2) {
-					damagesource = DamageSource.DROWN;
-				} else if (flag) {
-					damagesource = DamageSource.SWEET_BERRY_BUSH;
-				} else {
-					damagesource = DamageSource.GENERIC;
-				}
-				SoundEvent soundevent1 = this.getHurtSound(damagesource);
-				if (soundevent1 != null) {
-					this.playSound(soundevent1, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-				}
-				this.hurt(DamageSource.GENERIC, 0.0F);
-			}
-			case 3 -> {
-				SoundEvent soundevent = this.getDeathSound();
-				if (soundevent != null) {
-					this.playSound(soundevent, this.getSoundVolume(), (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-				}
-				this.setHealth(0.0F);
-				this.remove();
-			}
-			case 29, 30, 46 -> {
-				for (int j = 0; j < 128; ++j) {
-					double d0 = (double) j / 127.0D;
-					float f = (this.random.nextFloat() - 0.5F) * 0.2F;
-					float f1 = (this.random.nextFloat() - 0.5F) * 0.2F;
-					float f2 = (this.random.nextFloat() - 0.5F) * 0.2F;
-					double d1 = Mth.lerp(d0, this.xo, this.getX()) + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth() * 2.0D;
-					double d2 = Mth.lerp(d0, this.yo, this.getY()) + this.random.nextDouble() * (double) this.getBbHeight();
-					double d3 = Mth.lerp(d0, this.zo, this.getZ()) + (this.random.nextDouble() - 0.5D) * (double) this.getBbWidth() * 2.0D;
-					this.level.addParticle(ParticleTypes.PORTAL, d1, d2, d3, f, f1, f2);
-				}
-			}
-			case 54 -> HoneyBlock.showJumpParticles(this);
-			default -> super.handleEntityEvent(b);
-		}
-	}
+	//todo handleentityevent
 
 	@Override
 	public void readAdditionalSaveData(@NotNull CompoundTag nbt)
@@ -404,7 +199,7 @@ public abstract class Machine extends Mob implements MenuProvider
 
     		for(int i = 0; i < this.inventory.items.size(); ++i)
 			{
-         		this.inventory.items.set(i, ItemStack.of(listnbt.getCompound(i)));
+         		this.inventory.items.set(i, ItemStack.parseOptional(registryAccess(),listnbt.getCompound(i)));
     		}
     	}
 		if (nbt.contains("TurretRotations", 5))
@@ -503,7 +298,7 @@ public abstract class Machine extends Mob implements MenuProvider
 					this.delayticks,
 					this.useticks,
 					this.turretpitch,
-					this.turretyaw), this.blockPosition(), SiegeMachinesForge.RENDER_UPDATE_RANGE_SQR);
+					this.turretyaw), this.blockPosition(), SiegeMachines.RENDER_UPDATE_RANGE_SQR);
 		}
 	}
 
@@ -604,7 +399,7 @@ public abstract class Machine extends Mob implements MenuProvider
 	}
 
 	@Override
-    public void positionRider(@NotNull Entity entity) {
+    public void positionRider(@NotNull Entity entity,Entity.MoveFunction moveFunction) {
 		MoveFunction setPos = Entity::setPos;
         if (this.hasPassenger(entity)) {
             double yaw = (this.getGlobalTurretYaw()) * Math.PI / 180.0;
