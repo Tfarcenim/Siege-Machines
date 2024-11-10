@@ -6,6 +6,7 @@ import net.neoforged.fml.common.Mod;
 import ru.magistu.siegemachines.block.ModBlocks;
 import ru.magistu.siegemachines.client.ClientProxyForge;
 import ru.magistu.siegemachines.config.SpecsConfig;
+import ru.magistu.siegemachines.datagen.ModDatagen;
 import ru.magistu.siegemachines.item.recipes.ModRecipes;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
 import ru.magistu.siegemachines.client.gui.ModMenuTypes;
@@ -28,7 +29,7 @@ public class SiegeMachinesForge {
 
 
     public SiegeMachinesForge(IEventBus bus, Dist dist) {
-
+        bus.addListener(ModDatagen::gather);
         ModEntityTypes.register();
         SoundTypes.register();
         ModMenuTypes.register();

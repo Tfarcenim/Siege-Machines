@@ -1,11 +1,11 @@
 package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.client.KeyMapping;
-import ru.magistu.siegemachines.SiegeMachinesForge;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.item.component.CustomData;
+import ru.magistu.siegemachines.ModTags;
 import ru.magistu.siegemachines.client.KeyBindings;
-import ru.magistu.siegemachines.client.gui.machine.MachineContainer;
-import ru.magistu.siegemachines.network.PacketHandler;
-import ru.magistu.siegemachines.network.PacketMachine;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
@@ -20,8 +20,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -33,11 +31,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.HoneyBlock;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
-import ru.magistu.siegemachines.util.CartesianGeometry;
+
 import javax.annotation.Nullable;
 
 public abstract class Machine extends Mob implements MenuProvider
@@ -97,26 +92,21 @@ public abstract class Machine extends Mob implements MenuProvider
         nbt.remove("Passengers");
         nbt.remove("DelayTicks");
         nbt.remove("UseTicks");
-        stack.addTagElement("EntityTag", nbt);
+        stack.set(DataComponents.ENTITY_DATA, CustomData.of(nbt));
         return stack;
 	}
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource damagesource) {
-		return damagesource == DamageSource.CACTUS ||
-				damagesource == DamageSource.WITHER ||
-				damagesource == DamageSource.MAGIC ||
-				damagesource == DamageSource.DROWN ||
-				damagesource == DamageSource.STARVE ||
-				super.isInvulnerableTo(damagesource);
+		return damagesource.is(ModTags.DamageTypes.MACHINE_IMMUNE_TO) || super.isInvulnerableTo(damagesource);
 	}
 
 	public float adjustDamage(DamageSource damagesource, float f) {
-		if (damagesource.isFire()) {
+		if (damagesource.is(DamageTypeTags.IS_FIRE)) {
 			f *= 1.5f;
 		}
 
-		if (damagesource.isExplosion()) {
+		if (damagesource.is(DamageTypeTags.IS_EXPLOSION)) {
 			f *= 1.25f;
 		}
 
@@ -143,16 +133,10 @@ public abstract class Machine extends Mob implements MenuProvider
 
 	@Override
 	public boolean hurt(@NotNull DamageSource damagesource, float f) {
-		if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, damagesource, f)) return false;
-		if (this.isInvulnerableTo(damagesource))
+		if (isInvulnerableTo(damagesource)) {
 			return false;
-		if (this.level.isClientSide)
-			return false;
-		if (this.isDeadOrDying())
-			return false;
-		if (damagesource.isFire() && this.hasEffect(MobEffects.FIRE_RESISTANCE))
-			return false;
-		if (damagesource.getEntity() instanceof Player && !damagesource.isProjectile() && !damagesource.isExplosion() && !damagesource.isMagic() && this.getPassengers().isEmpty())
+		}
+		if (damagesource.getEntity() instanceof Player && this.getPassengers().isEmpty())
 		{
 			this.spawnAtLocation(this.getMachineItemWithData());
 			this.remove();
@@ -235,7 +219,7 @@ public abstract class Machine extends Mob implements MenuProvider
 					b0 = 2;
 				}
 
-				this.level.broadcastEntityEvent(this, b0);
+				this.level().broadcastEntityEvent(this, b0);
 			}
 
 			this.markHurt();
@@ -303,7 +287,7 @@ public abstract class Machine extends Mob implements MenuProvider
 
     @Nullable
 	@Override
-	public Entity getControllingPassenger()
+	public LivingEntity getControllingPassenger()
     {
 		return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
 	}
@@ -354,7 +338,6 @@ public abstract class Machine extends Mob implements MenuProvider
     }
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void handleEntityEvent(byte b) {
 		switch (b) {
 			case 2, 33, 36, 37, 44 -> {

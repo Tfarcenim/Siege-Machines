@@ -1,28 +1,29 @@
 package ru.magistu.siegemachines.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public final class SiegeMachineSpecs
 {
     private final String name;
 
-    public final ForgeConfigSpec.ConfigValue<Integer> durability;
-    public final ForgeConfigSpec.ConfigValue<Integer> delaytime;
-    public final ForgeConfigSpec.ConfigValue<Float> projectilespeed;
-    public final ForgeConfigSpec.ConfigValue<Float> inaccuracy;
-    public final ForgeConfigSpec.ConfigValue<Float> damagemultiplier;
+    public final ModConfigSpec.IntValue durability;
+    public final ModConfigSpec.IntValue delaytime;
+    public final ModConfigSpec.DoubleValue projectilespeed;
+    public final ModConfigSpec.DoubleValue inaccuracy;
+    public final ModConfigSpec.DoubleValue damagemultiplier;
 
-    public SiegeMachineSpecs(ForgeConfigSpec.Builder builder, String name, int durability, int delaytime, float projectilespeed, float inaccuracy, float damagemultiplier)
+    public SiegeMachineSpecs(ModConfigSpec.Builder builder, String name, int durability, int delaytime, float projectilespeed, float inaccuracy, float damagemultiplier)
     {
         this.name = name;
 
         builder.push(name);
 
-        this.durability = builder.define("durability", durability);
-        this.delaytime = builder.define("reloadTime", delaytime);
-        this.projectilespeed = builder.define("projectileSpeed", projectilespeed);
-        this.inaccuracy = builder.define("inaccuracy", inaccuracy);
-        this.damagemultiplier = builder.define("damageMultiplier", damagemultiplier);
+        this.durability = builder.defineInRange("durability", durability,0,Integer.MAX_VALUE);
+        this.delaytime = builder.defineInRange("reloadTime", delaytime,0,Integer.MAX_VALUE);
+        this.projectilespeed = builder.defineInRange("projectileSpeed", projectilespeed,0,Integer.MAX_VALUE);
+        this.inaccuracy = builder.defineInRange("inaccuracy", inaccuracy,0,Integer.MAX_VALUE);
+        this.damagemultiplier = builder.defineInRange("damageMultiplier", damagemultiplier,0,Float.MAX_VALUE);
 
         builder.pop();
     }
