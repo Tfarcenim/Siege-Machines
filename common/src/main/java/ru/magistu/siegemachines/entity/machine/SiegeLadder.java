@@ -12,18 +12,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
-import ru.magistu.siegemachines.SiegeMachinesForge;
+import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.item.ModItems;
 import ru.magistu.siegemachines.util.CartesianGeometry;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +29,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
-public class SiegeLadder extends Machine implements IAnimatable
+public class SiegeLadder extends Machine implements GeoEntity
 {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
     
     private static final Vec3 CLIMB_VECTOR = new Vec3(0.0, 130.0, 130.0).scale(1.0 / 16.0);
     private static final Vec3 CLIMB_PIVOT_1 = new Vec3(-8.0, 0.0, -37.0).scale(1.0 / 16.0);
@@ -47,7 +43,7 @@ public class SiegeLadder extends Machine implements IAnimatable
     private final List<LadderSeat> rightseats;
     public final List<LadderSeat> seats;
     
-    static AnimationBuilder MOVING_ANIM = new AnimationBuilder().addAnimation("Moving", ILoopType.EDefaultLoopTypes.LOOP);
+    static RawAnimation MOVING_ANIM = RawAnimation.begin().then("Moving", Animation.LoopType.LOOP);
 
     private int wheelssoundticks = 10;
 
@@ -65,7 +61,7 @@ public class SiegeLadder extends Machine implements IAnimatable
                 .collect(Collectors.toList());
     }
 
-    private <E extends IAnimatable> PlayState wheels_predicate(AnimationEvent<E> event)
+    private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
         event.getController().setAnimation(MOVING_ANIM);
 
@@ -73,18 +69,19 @@ public class SiegeLadder extends Machine implements IAnimatable
 	}
 
     @Override
-	public void registerControllers(AnimationData data)
-    {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, (t) -> {
-            double d = this.getWheelsSpeed();
-            this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
-            return wheelspitch += 0.015 * this.wheelsspeed;
-        }, this::wheels_predicate);
-		data.addAnimationController(wheels_controller);
+	public void registerControllers(AnimatableManager.ControllerRegistrar data) {
+        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
+		data.add(wheels_controller);
 	}
 
+    //(t) -> {
+    //            double d = this.getWheelsSpeed();
+    //            this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
+    //            return wheelspitch += 0.015 * this.wheelsspeed;
+    //        }todo
+
     @Override
-    public AnimationFactory getFactory()
+    public AnimatableInstanceCache getAnimatableInstanceCache()
     {
         return this.factory;
     }
@@ -92,7 +89,7 @@ public class SiegeLadder extends Machine implements IAnimatable
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand)
     {
-        if (player.level.isClientSide() || player.isPassenger())
+        if (player.level().isClientSide() || player.isPassenger())
             return InteractionResult.PASS;
 
         if (!this.isVehicle())
@@ -142,12 +139,12 @@ public class SiegeLadder extends Machine implements IAnimatable
         if (this.renderupdateticks-- <= 0)
         {
             this.updateMachineRender();
-            this.renderupdateticks = SiegeMachinesForge.RENDER_UPDATE_TIME;
+            this.renderupdateticks = SiegeMachines.RENDER_UPDATE_TIME;
         }
 
 //        if (this.getWheelsSpeed() > 0.0081 && this.wheelssoundticks-- <= 0)
 //        {
-//            this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), SoundTypes.RAM_WHEELS.get(), SoundCategory.NEUTRAL, 0.6f, 1.0f, true);
+//            this.level.playLocalSound(this.getX(), this.getY(), this.getZ(), ModSoundTypes.RAM_WHEELS.get(), SoundCategory.NEUTRAL, 0.6f, 1.0f, true);
 //            this.wheelssoundticks = 20;
 //        }
 
@@ -169,7 +166,7 @@ public class SiegeLadder extends Machine implements IAnimatable
         float highness = seat.climb();
         
         Vec3 pos = this.getSeatPosititon(highness, yaw, left);
-        Optional<Vec3> freepos = this.level.findFreePosition(seat, Shapes.create(AABB.ofSize(pos, 0.1, 0.1, 0.1)), pos, 0.0, 0.0, 0.0);
+        Optional<Vec3> freepos = this.level().findFreePosition(seat, Shapes.create(AABB.ofSize(pos, 0.1, 0.1, 0.1)), pos, 0.0, 0.0, 0.0);
         if (freepos.isPresent() && pos.distanceTo(freepos.get()) < 0.5)
         {
             seat.setHighness(highness);
@@ -181,21 +178,20 @@ public class SiegeLadder extends Machine implements IAnimatable
     }
 
     @Override
-    public void onRemovedFromWorld()
-    {
+    public void remove(RemovalReason reason) {
         for (LadderSeat seat : this.seats)
             seat.discard();
-        
-        super.onRemovedFromWorld();
+        super.remove(reason);
     }
-    
+
+/*
     @Override
     public void onAddedToWorld()
     {
         this.seats.forEach(seat -> this.getLevel().addFreshEntity(seat));
         
         super.onAddedToWorld();
-    }
+    }*/
 
     @Override
     public void use(Player player)
@@ -216,7 +212,7 @@ public class SiegeLadder extends Machine implements IAnimatable
 
     public double getWheelsSpeed()
     {
-        if (this.isOnGround())
+        if (this.onGround())
         {
             return this.getViewVector(5.0f).multiply(1, 0, 1).dot(this.getDeltaMovement());
         }

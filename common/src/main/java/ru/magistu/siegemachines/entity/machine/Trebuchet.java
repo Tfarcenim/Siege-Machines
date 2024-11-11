@@ -1,9 +1,5 @@
 package ru.magistu.siegemachines.entity.machine;
 
-import ru.magistu.siegemachines.SiegeMachinesForge;
-import ru.magistu.siegemachines.client.SoundTypes;
-import ru.magistu.siegemachines.client.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.client.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,27 +11,21 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import ru.magistu.siegemachines.util.CartesianGeometry;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Trebuchet extends ShootingMachine implements IAnimatable
+public class Trebuchet extends ShootingMachine implements GeoEntity
 {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
-    static AnimationBuilder SHOOTING_ANIM = new AnimationBuilder().addAnimation("Shooting", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder RELOADING_ANIM = new AnimationBuilder().addAnimation("Reloading", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder IDLE_RELOADED_ANIM = new AnimationBuilder().addAnimation("IdleReloaded", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder IDLE_NOT_RELOADED_ANIM = new AnimationBuilder().addAnimation("IdleNotReloaded", ILoopType.EDefaultLoopTypes.LOOP);
+    static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.LOOP);
+    static RawAnimation RELOADING_ANIM = RawAnimation.begin().then("Reloading", Animation.LoopType.LOOP);
+    static RawAnimation IDLE_RELOADED_ANIM = RawAnimation.begin().then("IdleReloaded", Animation.LoopType.LOOP);
+    static RawAnimation IDLE_NOT_RELOADED_ANIM = RawAnimation.begin().then("IdleNotReloaded", Animation.LoopType.LOOP);
 
     private final MachinePartEntity[] subentities;
     private final MachinePartEntity backside;
@@ -59,7 +49,7 @@ public class Trebuchet extends ShootingMachine implements IAnimatable
         this.subentities = new MachinePartEntity[] { this.backside };
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
+    private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event)
     {
         switch (state) {
             case SHOOTING -> {
@@ -125,7 +115,7 @@ public class Trebuchet extends ShootingMachine implements IAnimatable
     }
 
     @Override
-    public void registerControllers(AnimationData data)
+    public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
         AnimationController<?> controller = new AnimationController<>(this, "controller", 1, (t) ->
         {
@@ -139,7 +129,7 @@ public class Trebuchet extends ShootingMachine implements IAnimatable
     }
 
     @Override
-    public AnimationFactory getFactory()
+    public AnimatableInstanceCache getFactory()
     {
         return this.factory;
     }
@@ -153,7 +143,7 @@ public class Trebuchet extends ShootingMachine implements IAnimatable
         {
             return InteractionResult.SUCCESS;
         }
-        if (!this.level.isClientSide() && !this.isVehicle())
+        if (!this.level().isClientSide() && !this.isVehicle())
         {
             player.startRiding(this);
             return InteractionResult.SUCCESS;

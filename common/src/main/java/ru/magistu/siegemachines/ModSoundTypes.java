@@ -5,7 +5,7 @@ import dev.architectury.registry.registries.RegistrySupplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 
-public class SoundTypes
+public class ModSoundTypes
 {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(SiegeMachines.ID, Registries.SOUND_EVENT);
 

@@ -22,13 +22,13 @@ public class SiegeMachinesForge {
     public SiegeMachinesForge(IEventBus bus, Dist dist, ModContainer modContainer) {
         bus.addListener(ModDatagen::gather);
         ModEntityTypes.register();
-        SoundTypes.register();
+        ModSoundTypes.register();
         ModMenuTypes.register();
         ModBlocks.register();
         ModItems.register();
         ModRecipeSerializers.register();
 
-        PacketHandler.init();
+        PacketHandler.registerPackets();
 
         modContainer.registerConfig(ModConfig.Type.SERVER,SpecsConfig.SPEC,"siege-machines-specs.toml");
 

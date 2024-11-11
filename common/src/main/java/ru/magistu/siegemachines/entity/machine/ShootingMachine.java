@@ -1,11 +1,11 @@
 package ru.magistu.siegemachines.entity.machine;
 
+import net.minecraft.server.level.ServerLevel;
+import org.joml.Vector3d;
 import ru.magistu.siegemachines.SiegeMachines;
-import com.mojang.math.Vector3d;
-import ru.magistu.siegemachines.SiegeMachinesForge;
 import ru.magistu.siegemachines.entity.IReloading;
-import ru.magistu.siegemachines.entity.projectile.Missile;
 import ru.magistu.siegemachines.entity.projectile.ProjectileBuilder;
+import ru.magistu.siegemachines.item.Missile;
 import ru.magistu.siegemachines.network.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleOptions;
@@ -54,25 +54,24 @@ public abstract class ShootingMachine extends Machine implements IReloading
             }
             return;
         }
-        LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+        LivingEntity livingentity = this.getControllingPassenger();
         Vec3 shotpos = this.getShotPos();
-        Projectile projectile = projectilebuilder.build(this.level, new Vector3d(shotpos.x, shotpos.y, shotpos.z), livingentity == null ? this : livingentity);
-        if (projectile instanceof Missile)
+        Projectile projectile = projectilebuilder.build(this.level(), new Vector3d(shotpos.x, shotpos.y, shotpos.z), livingentity == null ? this : livingentity);
+        if (projectile instanceof Missile missile)
         {
-            Missile missile = (Missile) projectile;
             missile.setItem(new ItemStack(missile.getDefaultItem()));
         }
-        projectile.shootFromRotation(this, this.getTurretPitch(), this.getGlobalTurretYaw(), 0.0f, this.type.specs.projectilespeed.get(), this.type.specs.inaccuracy.get());
-        this.level.addFreshEntity(projectile);
+        projectile.shootFromRotation(this, this.getTurretPitch(), this.getGlobalTurretYaw(), 0.0f, (float)(double)this.type.specs.projectilespeed.get(),(float)(double) this.type.specs.inaccuracy.get());
+        this.level().addFreshEntity(projectile);
         this.inventory.shrinkItem(projectilebuilder.item);
     }
 
     @Override
     public void use(Player player)
     {
-        if (!this.level.isClientSide())
+        if (!this.level().isClientSide())
         {
-            PacketHandler.sendPacketToAllInArea(new PacketMachineUse(this.getId()), this.blockPosition(), SiegeMachinesForge.RENDER_UPDATE_RANGE_SQR);
+            PacketHandler.sendPacketToAllInArea((ServerLevel) level(),new S2CPacketMachineUse(this.getId()), this.blockPosition(), SiegeMachines.RENDER_UPDATE_RANGE_SQR);
         }
 
         this.startShooting(player);
@@ -81,9 +80,9 @@ public abstract class ShootingMachine extends Machine implements IReloading
     @Override
     public void useRealise()
     {
-        if (!this.level.isClientSide())
+        if (!this.level().isClientSide())
         {
-            PacketHandler.sendPacketToAllInArea(new PacketMachineUseRealise(this.getId()), this.blockPosition(), SiegeMachinesForge.RENDER_UPDATE_RANGE_SQR);
+            level().broadcastEntityEvent(this,(byte)USE_REALISE);
         }
         this.shoot();
     }
@@ -138,7 +137,7 @@ public abstract class ShootingMachine extends Machine implements IReloading
                                                new Random().nextGaussian() * 0.2);
             Vec3 velocity = this.getShotView().add(inaccuracy).scale(speed);
 
-            this.level.addParticle(particle, pos.x, pos.y, pos.z, velocity.x, velocity.y, velocity.z);
+            this.level().addParticle(particle, pos.x, pos.y, pos.z, velocity.x, velocity.y, velocity.z);
         }
     }
 
@@ -152,10 +151,10 @@ public abstract class ShootingMachine extends Machine implements IReloading
             {
                 if (this.isValidAmmo(this.inventory.getItem(i)))
                 {
-                    PacketHandler.sendPacketToAllInArea(
+                    PacketHandler.sendPacketToAllInArea((ServerLevel) level(),
                             new PacketMachineInventorySlot(this.getId(), i, this.inventory.getItem(i)),
                             this.blockPosition(),
-                            SiegeMachinesForge.RENDER_UPDATE_RANGE_SQR);
+                            SiegeMachines.RENDER_UPDATE_RANGE_SQR);
                 }
             }
 		}

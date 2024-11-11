@@ -2,12 +2,14 @@ package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.component.CustomData;
 import ru.magistu.siegemachines.ModTags;
-import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.KeyBindings;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -42,16 +44,17 @@ public abstract class Machine extends Mob implements MenuProvider
 	public MachineInventory inventory;
 	public final MachineType type;
 
-	protected float turretpitch = -25.0f;
-	protected float turretpitchprev = this.turretpitch;
-	protected float turretpitchdest = this.turretpitch;
-	protected float turretyaw = 0.0f;
-	protected float turretyawprev = this.turretyaw;
-	protected float turretyawdest = this.turretyaw;
+	protected float turretpitchprev = getTurretPitch();
+	protected float turretpitchdest = getTurretPitch();
+	protected float turretyawprev = getTurretYaw();
+	protected float turretyawdest = getTurretYaw();
 	protected float yawdest = this.getYRot();
 
-	public int useticks = -1;
-	public int delayticks;
+	private static final EntityDataAccessor<Float> DATA_TURRET_PITCH = SynchedEntityData.defineId(Machine.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Float> DATA_TURRET_YAW = SynchedEntityData.defineId(Machine.class, EntityDataSerializers.FLOAT);
+	private static final EntityDataAccessor<Integer> DATA_USE_TICKS = SynchedEntityData.defineId(Machine.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Integer> DATA_DELAY_TICKS = SynchedEntityData.defineId(Machine.class, EntityDataSerializers.INT);
+
 	protected int renderupdateticks = 0;
 	public int deploymentticks = 0;
 
@@ -59,7 +62,7 @@ public abstract class Machine extends Mob implements MenuProvider
     {
         super(entitytype, level);
 		this.type = type;
-		this.delayticks = this.type.specs.delaytime.get();
+		setDelayTicks(type.specs.delaytime.get());
 		this.inventory = new MachineInventory(9 * this.type.containerrows);
 		if (level.isClientSide())
 			this.usekey = KeyBindings.getUseKey(type);
@@ -75,6 +78,16 @@ public abstract class Machine extends Mob implements MenuProvider
 				.add(Attributes.MOVEMENT_SPEED, 0.0D)
 				.add(Attributes.ATTACK_DAMAGE, 0.0D)
 				.add(Attributes.FOLLOW_RANGE, 0.0D);
+	}
+
+	protected static final int USE_REALISE = 66;
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(DATA_TURRET_PITCH,-25f);
+		builder.define(DATA_TURRET_YAW,0f);
+		builder.define(DATA_USE_TICKS,-1);
 	}
 
 	public ItemStack getMachineItemWithData() {
@@ -175,9 +188,9 @@ public abstract class Machine extends Mob implements MenuProvider
     		listnbt.add(compoundnbt);
     	}
     	nbt.put("Items", listnbt);
-		nbt.put("TurretRotations", this.newFloatList(this.turretpitch, this.turretyaw));
-		nbt.putInt("DelayTicks", this.delayticks);
-		nbt.putInt("UseTicks", this.useticks);
+		nbt.put("TurretRotations", this.newFloatList(getTurretPitch(), getTurretYaw()));
+		nbt.putInt("DelayTicks",getDelayTicks());
+		nbt.putInt("UseTicks", getUseTicks());
 	}
 
 	@Override
@@ -209,17 +222,17 @@ public abstract class Machine extends Mob implements MenuProvider
 		}
 		if (nbt.contains("DelayTicks"))
 		{
-			this.delayticks = nbt.getInt("DelayTicks");
+			setDelayTicks(nbt.getInt("DelayTicks"));
 		}
 		if (nbt.contains("UseTicks"))
 		{
-			this.useticks = nbt.getInt("UseTicks");
+			setUseTicks(nbt.getInt("UseTicks"));
 		}
 	}
 
 	public float getGlobalTurretYaw()
 	{
-		return Mth.lerp(0.5f, this.yRotO, this.getYRot()) + Mth.lerp(0.5f, this.turretyawprev, this.turretyaw);
+		return Mth.lerp(0.5f, this.yRotO, this.getYRot()) + Mth.lerp(0.5f, this.turretyawprev,getTurretYaw());
 	}
 
 	public float getYaw()
@@ -247,12 +260,12 @@ public abstract class Machine extends Mob implements MenuProvider
 
 	public float getTurretPitch(float f)
 	{
-		return Mth.lerp(f, this.turretpitchprev, this.turretpitch);
+		return Mth.lerp(f, this.turretpitchprev, entityData.get(DATA_TURRET_PITCH));
 	}
 
 	public float getTurretYaw(float f)
 	{
-		return Mth.lerp(f, this.turretyawprev, this.turretyaw);
+		return Mth.lerp(f, this.turretyawprev, entityData.get(DATA_TURRET_YAW));
 	}
 
 	public float getTurretPitch()
@@ -265,12 +278,32 @@ public abstract class Machine extends Mob implements MenuProvider
 		return this.getTurretYaw(0.5f);
 	}
 
+	public int getUseTicks() {
+		return entityData.get(DATA_USE_TICKS);
+	}
+
+	public void setUseTicks(int useTicks) {
+		entityData.set(DATA_USE_TICKS,useTicks);
+	}
+
+	public int getDelayTicks() {
+		return entityData.get(DATA_DELAY_TICKS);
+	}
+
+	public void setDelayTicks(int delayTicks) {
+		entityData.set(DATA_DELAY_TICKS,delayTicks);
+	}
+
 	public void setTurretRotations(float pitch, float yaw)
 	{
-		this.turretpitchprev = this.turretpitch;
-		this.turretyawprev = this.turretyaw;
-		this.turretpitch = pitch;
-		this.turretyaw = yaw;
+		this.turretpitchprev = getTurretPitch();
+		this.turretyawprev = getTurretYaw();
+		entityData.set(DATA_TURRET_PITCH,pitch);
+		entityData.set(DATA_TURRET_YAW,yaw);
+	}
+
+	protected void setTurretPitch(float pitch) {
+		entityData.set(DATA_TURRET_PITCH,pitch);
 	}
 
 	public float getTurretPitchDest()
@@ -289,17 +322,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		this.turretyawdest = yaw;
 	}
 
-	public void updateMachineRender()
-	{
-		if (!this.level().isClientSide())
-		{
-			PacketHandler.sendPacketToAllInArea(new PacketMachine(
-					this.getId(),
-					this.delayticks,
-					this.useticks,
-					this.turretpitch,
-					this.turretyaw), this.blockPosition(), SiegeMachines.RENDER_UPDATE_RANGE_SQR);
-		}
+	public void updateMachineRender() {
 	}
 
 	public void updateYaw()
@@ -316,7 +339,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		boolean shouldrotate = this.checkYaw(newyaw, this.getTurretYaw(), this.type.turretspeed);
 		float newpitch = shouldrotate ? this.turn(this.getTurretPitch(), this.getTurretPitchDest(), this.type.turretspeed, this.type.turretminpitch, this.type.turretmaxpitch) : this.getTurretPitch();
 
-		if (this.turretpitch != newpitch || this.turretyaw != newyaw)
+		if (getTurretPitch() != newpitch || getTurretYaw() != newyaw)
 			this.setTurretRotations(newpitch, newyaw);
 	}
 
@@ -369,6 +392,15 @@ public abstract class Machine extends Mob implements MenuProvider
 		return (float) 0.5 * Math.max((float) 6.0 - dist, 0.0f) / (float) 6.0;
 	}
 
+	@Override
+	public void handleEntityEvent(byte id) {
+		if (id == USE_REALISE) {
+			useRealise();
+		} else {
+			super.handleEntityEvent(id);
+		}
+	}
+
 	public abstract void use(Player player);
 
 	public abstract void useRealise();
@@ -382,7 +414,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		Entity passenger = this.getControllingPassenger();
 		if (passenger instanceof ServerPlayer serverPlayer) {
 			this.stopRiding();
-			serverPlayer.openMenu((ServerPlayer) passenger, this, this.blockPosition());
+			serverPlayer.openMenu(this);
 		}
 	}
 
@@ -391,11 +423,6 @@ public abstract class Machine extends Mob implements MenuProvider
 		double yaw = (this.getGlobalTurretYaw()) * Math.PI / 180.0;
 
 		return this.position().add(CartesianGeometry.applyRotations(this.type.passengerpos, 0.0, yaw));
-	}
-
-	@Override
-	public boolean shouldRiderSit() {
-		return false;
 	}
 
 	@Override

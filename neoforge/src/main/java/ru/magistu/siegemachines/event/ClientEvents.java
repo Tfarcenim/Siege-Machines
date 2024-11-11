@@ -1,47 +1,33 @@
 package ru.magistu.siegemachines.event;
 
+import net.neoforged.neoforge.client.event.InputEvent;
 import ru.magistu.siegemachines.SiegeMachines;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import ru.magistu.siegemachines.client.KeyBindings;
 import ru.magistu.siegemachines.entity.IReloading;
 import ru.magistu.siegemachines.entity.machine.Machine;
-import ru.magistu.siegemachines.client.gui.machine.crosshair.Crosshair;
+import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
 import ru.magistu.siegemachines.network.PacketHandler;
 import ru.magistu.siegemachines.network.PacketOpenMachineInventory;
-import ru.magistu.siegemachines.network.PacketMachineUse;
+import ru.magistu.siegemachines.network.S2CPacketMachineUse;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 
-@Mod.EventBusSubscriber
-public class ClientEvents
-{
+public class ClientEvents {
     public static Crosshair CROSSHAIR = null;
 
-    @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
-    @OnlyIn(Dist.CLIENT)
+
     public static void onKeyPressedEvent(InputEvent.Key ev)
     {
-        if (ev.isCanceled())
-            return;
-        
         if (KeyBindings.MACHINE_USE.isDown())
         {
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.MACHINE_USE)
             {
-                PacketHandler.sendToServer(new PacketMachineUse(player.getVehicle().getId()));
+                PacketHandler.sendToServer(new S2CPacketMachineUse(player.getVehicle().getId()));
             }
         }
 
@@ -50,7 +36,7 @@ public class ClientEvents
             LocalPlayer player = Minecraft.getInstance().player;
             if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.LADDER_CLIMB)
             {
-                PacketHandler.sendToServer(new PacketMachineUse(player.getVehicle().getId()));
+                PacketHandler.sendToServer(new S2CPacketMachineUse(player.getVehicle().getId()));
             }
         }
 

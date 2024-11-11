@@ -1,9 +1,9 @@
 package ru.magistu.siegemachines.entity.machine;
 
-import ru.magistu.siegemachines.SiegeMachinesForge;
-import ru.magistu.siegemachines.client.SoundTypes;
-import ru.magistu.siegemachines.client.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.client.gui.machine.crosshair.ReloadingCrosshair;
+import ru.magistu.siegemachines.ModSoundTypes;
+import ru.magistu.siegemachines.SiegeMachines;
+import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
+import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -14,24 +14,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Ballista extends ShootingMachine implements IAnimatable
+public class Ballista extends ShootingMachine implements GeoEntity
 {
-    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
-    static AnimationBuilder SHOOTING_ANIM = new AnimationBuilder().addAnimation("Shooting", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder RELOADING_ANIM = new AnimationBuilder().addAnimation("Reloading", ILoopType.EDefaultLoopTypes.LOOP);
+    static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.LOOP);
+    static RawAnimation RELOADING_ANIM = RawAnimation.begin().then("Reloading", Animation.LoopType.LOOP);
 
     public enum State
     {
@@ -45,7 +39,7 @@ public class Ballista extends ShootingMachine implements IAnimatable
         super(entitytype, level, MachineType.BALLISTA);
     }
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
+    private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event)
     {
         switch (state) {
             case SHOOTING -> {
@@ -61,21 +55,23 @@ public class Ballista extends ShootingMachine implements IAnimatable
     }
 
     @Override
-    public void registerControllers(AnimationData data)
+    public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> controller = new AnimationController<>(this, "controller", 1, (t) ->
-        {
-            if (this.state.equals(State.RELOADING))
-            {
-                return (double) (this.type.specs.delaytime.get() - this.delayticks) / this.type.specs.delaytime.get();
-            }
-            return t;
-        }, this::predicate);
-        data.addAnimationController(controller);
+        AnimationController<?> controller = new AnimationController<>(this, "controller", 1, this::predicate);
+        data.add(controller);
     }
 
+    //(t) ->
+    //        {
+    //            if (this.state.equals(State.RELOADING))
+    //            {
+    //                return (double) (this.type.specs.delaytime.get() - this.delayticks) / this.type.specs.delaytime.get();
+    //            }
+    //            return t;
+    //        }
+
     @Override
-    public AnimationFactory getFactory()
+    public AnimatableInstanceCache getAnimatableInstanceCache()
     {
         return this.factory;
     }
@@ -87,7 +83,7 @@ public class Ballista extends ShootingMachine implements IAnimatable
         {
             return InteractionResult.SUCCESS;
         }
-        if (!this.level.isClientSide() && !this.isVehicle())
+        if (!this.level().isClientSide() && !this.isVehicle())
         {
             player.startRiding(this);
             return InteractionResult.SUCCESS;
@@ -98,21 +94,21 @@ public class Ballista extends ShootingMachine implements IAnimatable
 
     public void startShooting(Player player)
     {
-        if (this.delayticks <= 0 && this.useticks <= 0 && this.shootingticks <= 0)
+        if (getDelayTicks() <= 0 && getUseTicks() <= 0 && this.shootingticks <= 0)
         {
             this.state = State.SHOOTING;
-            this.useticks = this.type.usetime;
+            setUseTicks(this.type.usetime);
             this.shootingticks = this.type.userealisetime;
 
             Vec3 pos = this.position();
-            this.level.playLocalSound(pos.x, pos.y, pos.z, SoundTypes.BALLISTA_SHOOTING.get(), this.getSoundSource(), 1.4f, 1.0f, false);
+            this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.BALLISTA_SHOOTING.get(), this.getSoundSource(), 1.4f, 1.0f, false);
         }
     }
 
     @Override
     public void shoot()
     {
-        if (!level.isClientSide())
+        if (!level().isClientSide())
         {
             super.shoot();
         }
@@ -140,9 +136,9 @@ public class Ballista extends ShootingMachine implements IAnimatable
     {
         if (this.isAlive())
         {
-            if (this.isVehicle() && this.useticks <= 0 && this.delayticks <= 0)
+            if (this.isVehicle() && getUseTicks() <= 0 && getDelayTicks() <= 0)
             {
-                LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+                LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setTurretRotations(livingentity.getXRot(), this.getTurretYaw());
                 this.updateTurretRotations();
@@ -158,11 +154,15 @@ public class Ballista extends ShootingMachine implements IAnimatable
     @Override
     public void tick()
     {
-        if (this.useticks != 0 && --this.useticks <= 0)
-        {
-            this.state = State.RELOADING;
-            this.useticks = 0;
-            this.delayticks = this.type.specs.delaytime.get();
+        int useticks = getUseTicks();
+
+        if(useticks > 0) {
+            setUseTicks(--useticks);
+            if (useticks <= 0) {
+                this.state = State.RELOADING;
+                setUseTicks(0);
+                setDelayTicks(this.type.specs.delaytime.get());
+            }
         }
 
         if (this.shootingticks != 0 && --this.shootingticks <= 0)
@@ -171,34 +171,34 @@ public class Ballista extends ShootingMachine implements IAnimatable
             this.shootingticks = 0;
         }
 
-        if (!level.isClientSide() && this.isOnGround())
+        if (!level().isClientSide() && this.onGround())
         {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
         }
 
-        if (this.delayticks > 0 && this.isVehicle())
+        int delayticks = getDelayTicks();
+
+        if (delayticks > 0 && this.isVehicle())
         {
-            if (this.delayticks % 21 == 0)
+            if (delayticks % 21 == 0)
             {
                 Vec3 pos = this.position();
-                this.level.playLocalSound(pos.x, pos.y, pos.z, SoundTypes.BALLISTA_RELOADING.get(), this.getSoundSource(), 1.0f, 1.0f, false);
+                this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.BALLISTA_RELOADING.get(), this.getSoundSource(), 1.0f, 1.0f, false);
             }
-            --this.delayticks;
+            setDelayTicks(--delayticks);
         }
 
         if (this.renderupdateticks-- <= 0)
         {
             this.updateMachineRender();
-            this.renderupdateticks = SiegeMachinesForge.RENDER_UPDATE_TIME;
+            this.renderupdateticks = SiegeMachines.RENDER_UPDATE_TIME;
         }
 
         super.tick();
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public Crosshair createCrosshair()
-    {
+    public Crosshair createCrosshair() {
         return new ReloadingCrosshair();
     }
 
