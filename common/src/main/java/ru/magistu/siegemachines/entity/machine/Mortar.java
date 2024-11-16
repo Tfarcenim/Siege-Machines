@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -31,8 +32,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Mortar extends ShootingMachine implements GeoEntity, IReloading
 {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
-
-    static RawAnimation MOVING_ANIM = RawAnimation.begin().then("Moving", Animation.LoopType.LOOP);
 
     public int shootingticks = 0;
 
@@ -47,7 +46,7 @@ public class Mortar extends ShootingMachine implements GeoEntity, IReloading
 
     private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
-        event.getController().setAnimation(MOVING_ANIM);
+        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
 
         return PlayState.CONTINUE;
     }

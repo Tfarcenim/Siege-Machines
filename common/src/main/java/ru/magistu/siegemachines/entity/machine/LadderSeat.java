@@ -5,7 +5,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import ru.magistu.siegemachines.entity.EntityTypes;
+import ru.magistu.siegemachines.entity.ModEntityTypes;
 
 
 public class LadderSeat extends Seat
@@ -16,7 +16,7 @@ public class LadderSeat extends Seat
 	
 	public LadderSeat(SiegeLadder parent)
 	{
-		super(EntityTypes.SEAT.get(), parent.level);
+		super(ModEntityTypes.SEAT.get(), parent.level());
 		this.parent = parent;
 	}
 	
@@ -41,13 +41,13 @@ public class LadderSeat extends Seat
 			return InteractionResult.PASS;
 		else if (this.isVehicle())
 			return InteractionResult.PASS;
-		else if (!this.level.isClientSide)
+		else if (!this.level().isClientSide)
 			return player.startRiding(this) ? InteractionResult.CONSUME : InteractionResult.PASS;
 		else
 			return InteractionResult.SUCCESS;
 	}
 	
-	@Override
+	//@Override
 	public boolean shouldRiderSit()
 	{
 		return false;

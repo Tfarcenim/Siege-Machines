@@ -2,13 +2,15 @@ package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import org.jetbrains.annotations.NotNull;
+import ru.magistu.siegemachines.entity.CommonPartEntity;
 
-public class MachinePartEntity extends net.minecraftforge.entity.PartEntity<Machine>
+public class MachinePartEntity extends CommonPartEntity<Machine>
 {
     public final Machine parentmob;
     public final String name;
@@ -24,7 +26,9 @@ public class MachinePartEntity extends net.minecraftforge.entity.PartEntity<Mach
     }
 
     @Override
-    protected void defineSynchedData() {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+
+    }
 
     @Override
     protected void readAdditionalSaveData(@NotNull CompoundTag p_70037_1_) {}

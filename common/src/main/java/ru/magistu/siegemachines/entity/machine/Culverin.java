@@ -2,7 +2,6 @@ package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -21,6 +20,7 @@ import ru.magistu.siegemachines.entity.IReloading;
 import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
 import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -30,8 +30,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Culverin extends ShootingMachine implements GeoEntity, IReloading
 {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
-
-    static RawAnimation MOVING_ANIM = RawAnimation.begin().then("Moving", Animation.LoopType.LOOP);
 
     private double wheelspitch = 0.0;
     private double wheelsspeed = 0.0;
@@ -47,7 +45,7 @@ public class Culverin extends ShootingMachine implements GeoEntity, IReloading
 
     private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
-        event.getController().setAnimation(MOVING_ANIM);
+        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
 
         return PlayState.CONTINUE;
     }
@@ -202,7 +200,7 @@ public class Culverin extends ShootingMachine implements GeoEntity, IReloading
             this.blowParticles(ParticleTypes.FLAME, 0.035, 25);
             this.blowParticles(ParticleTypes.CLOUD, 0.2, 60);
             Vec3 pos = this.position();
-            this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.MORTAR_SHOOTING.get(), this.getSoundSource(), 1.5f/*this.getVolumeFromDist(1.5f, 64.0f, this.distanceTo(player))*/, 0.85f + this.level.random.nextFloat() * 0.3f, false);
+            this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.MORTAR_SHOOTING.get(), this.getSoundSource(), 1.5f/*this.getVolumeFromDist(1.5f, 64.0f, this.distanceTo(player))*/, 0.85f + this.level().random.nextFloat() * 0.3f, false);
         }
 
         setDelayTicks(this.type.specs.delaytime.get());

@@ -1,8 +1,7 @@
 package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -22,13 +21,6 @@ public class Seat extends Entity
 		super(entitytype, level);
 	}
 
-	@Override
-	public Packet<?> getAddEntityPacket() {
-		return new ClientboundAddEntityPacket(this);
-	}
-
-	@Override
-	protected void defineSynchedData() {}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag compound) {}
@@ -45,7 +37,12 @@ public class Seat extends Entity
 	{
 		return false;
 	}
-	
+
+	@Override
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+
+	}
+
 	@Override
 	public void tick()
 	{
@@ -66,7 +63,7 @@ public class Seat extends Entity
 	}
 
 	@Override
-	public void lerpTo(double x, double y, double z, float yaw, float pitch, int posRotationIncrements, boolean teleport) 
+	public void lerpTo(double x, double y, double z, float yaw, float pitch, int posRotationIncrements)
 	{
 		this.lerpX = x;
 		this.lerpY = y;

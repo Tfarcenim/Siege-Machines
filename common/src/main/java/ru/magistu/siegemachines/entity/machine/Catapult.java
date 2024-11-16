@@ -1,5 +1,9 @@
 package ru.magistu.siegemachines.entity.machine;
 
+import ru.magistu.siegemachines.ModSoundTypes;
+import ru.magistu.siegemachines.SiegeMachines;
+import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
+import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -11,6 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -20,11 +25,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Catapult extends ShootingMachine implements GeoEntity
 {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
-
-    static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.LOOP);
-    static RawAnimation RELOADING_ANIM = RawAnimation.begin().then("Reloading", Animation.LoopType.LOOP);
-    static RawAnimation IDLE_RELOADED_ANIM = RawAnimation.begin().then("IdleReloaded", Animation.LoopType.LOOP);
-    static RawAnimation IDLE_NOT_RELOADED_ANIM = RawAnimation.begin().then("IdleNotReloaded", Animation.LoopType.LOOP);
 
     public enum State
     {
@@ -44,19 +44,19 @@ public class Catapult extends ShootingMachine implements GeoEntity
     {
         switch (state) {
             case SHOOTING -> {
-                event.getController().setAnimation(SHOOTING_ANIM);
+                event.getController().setAnimation(BaseAnimations.SHOOTING_ANIM);
                 return PlayState.CONTINUE;
             }
             case IDLE_RELOADED -> {
-                event.getController().setAnimation(IDLE_RELOADED_ANIM);
+                event.getController().setAnimation(BaseAnimations.IDLE_RELOADED_ANIM);
                 return PlayState.CONTINUE;
             }
             case RELOADING -> {
-                event.getController().setAnimation(RELOADING_ANIM);
+                event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
                 return PlayState.CONTINUE;
             }
             case IDLE_NOT_RELOADED -> {
-                event.getController().setAnimation(IDLE_NOT_RELOADED_ANIM);
+                event.getController().setAnimation(BaseAnimations.IDLE_NOT_RELOADED_ANIM);
                 return PlayState.CONTINUE;
             }
         }
@@ -94,7 +94,7 @@ public class Catapult extends ShootingMachine implements GeoEntity
         {
             return InteractionResult.SUCCESS;
         }
-        if (!this.level.isClientSide() && !this.isVehicle())
+        if (!this.level().isClientSide() && !this.isVehicle())
         {
             player.startRiding(this);
             return InteractionResult.SUCCESS;
@@ -105,21 +105,21 @@ public class Catapult extends ShootingMachine implements GeoEntity
 
     public void startShooting(Player player)
     {
-        if (this.delayticks <= 0 && this.useticks <= 0 && this.shootingticks <= 0)
+        if (getDelayTicks() <= 0 && getUseTicks() <= 0 && this.shootingticks <= 0)
         {
             this.state = State.SHOOTING;
-            this.useticks = this.type.usetime;
+            setUseTicks(type.usetime);
             this.shootingticks = this.type.userealisetime;
 
             Vec3 pos = this.position();
-            this.level.playLocalSound(pos.x, pos.y, pos.z, SoundTypes.CATAPULT_SHOOTING.get(), this.getSoundSource(), 1.5f, 1.0f, false);
+            this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.CATAPULT_SHOOTING.get(), this.getSoundSource(), 1.5f, 1.0f, false);
         }
     }
 
     @Override
     public void shoot()
     {
-        if (!level.isClientSide())
+        if (!level().isClientSide())
         {
             super.shoot();
         }
@@ -130,9 +130,9 @@ public class Catapult extends ShootingMachine implements GeoEntity
     {
         if (this.isAlive())
         {
-            if (this.isVehicle() && this.useticks <= 0 && this.delayticks <= 0)
+            if (this.isVehicle() && getUseTicks() <= 0 && getDelayTicks() <= 0)
             {
-                LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+                LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setTurretRotations(livingentity.getXRot(), this.getTurretYaw());
                 this.updateTurretRotations();
@@ -147,11 +147,15 @@ public class Catapult extends ShootingMachine implements GeoEntity
     @Override
     public void tick()
     {
-        if (this.useticks != 0 && --this.useticks <= 0)
+        int useticks = getUseTicks();
+        if (useticks > 0)
         {
-            this.state = State.RELOADING;
-            this.useticks = 0;
-            this.delayticks = this.type.specs.delaytime.get();
+            useticks--;
+            if (useticks <=0) {
+                this.state = State.RELOADING;
+                setDelayTicks(this.type.specs.delaytime.get());
+            }
+            setUseTicks(useticks);
         }
 
         if (this.shootingticks != 0 && --this.shootingticks <= 0)
@@ -160,20 +164,22 @@ public class Catapult extends ShootingMachine implements GeoEntity
             this.shootingticks = 0;
         }
 
-        if (!level.isClientSide() && this.isOnGround())
+        if (!level().isClientSide() && this.onGround())
         {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
         }
 
-        if (this.delayticks > 0 && this.isVehicle())
+        int delayticks = getDelayTicks();
+        if (delayticks > 0 && this.isVehicle())
         {
-            if (this.delayticks % 20 == 0)
+            if (delayticks % 20 == 0)
             {
                 Vec3 pos = this.position();
-                this.level.playLocalSound(pos.x, pos.y, pos.z, SoundTypes.CATAPULT_RELOADING.get(), this.getSoundSource(), 1.0f, 1.0f, false);
+                this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.CATAPULT_RELOADING.get(), this.getSoundSource(), 1.0f, 1.0f, false);
             }
-            if (--this.delayticks <= 0)
-            {
+            delayticks--;
+            setDelayTicks(delayticks);
+            if (delayticks <= 0) {
                 this.state = State.IDLE_RELOADED;
             }
         }
@@ -181,14 +187,13 @@ public class Catapult extends ShootingMachine implements GeoEntity
         if (this.renderupdateticks-- <= 0)
         {
             this.updateMachineRender();
-            this.renderupdateticks = SiegeMachinesForge.RENDER_UPDATE_TIME;
+            this.renderupdateticks = SiegeMachines.RENDER_UPDATE_TIME;
         }
 
         super.tick();
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public Crosshair createCrosshair()
     {
         return new ReloadingCrosshair();

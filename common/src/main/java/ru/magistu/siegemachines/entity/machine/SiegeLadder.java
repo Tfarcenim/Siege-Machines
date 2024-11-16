@@ -14,6 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.item.ModItems;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import ru.magistu.siegemachines.util.CartesianGeometry;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -42,8 +43,6 @@ public class SiegeLadder extends Machine implements GeoEntity
     private final List<LadderSeat> leftseats;
     private final List<LadderSeat> rightseats;
     public final List<LadderSeat> seats;
-    
-    static RawAnimation MOVING_ANIM = RawAnimation.begin().then("Moving", Animation.LoopType.LOOP);
 
     private int wheelssoundticks = 10;
 
@@ -63,7 +62,7 @@ public class SiegeLadder extends Machine implements GeoEntity
 
     private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
-        event.getController().setAnimation(MOVING_ANIM);
+        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
 
         return PlayState.CONTINUE;
 	}

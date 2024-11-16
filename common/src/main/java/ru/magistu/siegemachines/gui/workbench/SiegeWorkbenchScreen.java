@@ -1,5 +1,7 @@
 package ru.magistu.siegemachines.gui.workbench;
 
+import net.minecraft.client.gui.GuiGraphics;
+import org.lwjgl.glfw.GLFW;
 import ru.magistu.siegemachines.SiegeMachines;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -8,14 +10,11 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class SiegeWorkbenchScreen extends AbstractContainerScreen<SiegeWorkbenchContainer>
 {
-	private static final ResourceLocation DISPLAY_CASE_GUI = new ResourceLocation(SiegeMachines.ID, "textures/gui/siege_workbench.png");
+	private static final ResourceLocation DISPLAY_CASE_GUI = SiegeMachines.id("textures/gui/siege_workbench.png");
 
 	public SiegeWorkbenchScreen(SiegeWorkbenchContainer screenContainer, Inventory inv, Component titleIn)
     {
@@ -23,20 +22,11 @@ public class SiegeWorkbenchScreen extends AbstractContainerScreen<SiegeWorkbench
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks)
+	public void render(GuiGraphics matrixStack, int mouseX, int mouseY, float partialTicks)
     {
-		this.renderBackground(matrixStack);
+		this.renderBackground(matrixStack,mouseX,mouseY,partialTicks);
 		super.render(matrixStack, mouseX, mouseY, partialTicks);
 		this.renderTooltip(matrixStack, mouseX, mouseY);
-	}
-
-    @Override
-	protected void renderTooltip(@NotNull PoseStack matrixStack, int x, int y)
-    {
-		if (this.minecraft.player.getInventory().getSelected().isEmpty() && this.hoveredSlot != null && this.hoveredSlot.hasItem())
-		{
-    		this.renderTooltip(matrixStack, this.hoveredSlot.getItem(), x, y);
-		}
 	}
 
 	@Override
@@ -47,21 +37,18 @@ public class SiegeWorkbenchScreen extends AbstractContainerScreen<SiegeWorkbench
 	}
 
 	@Override
-	protected void renderBg(@NotNull PoseStack matrixStack, float partialTicks, int mouseX, int mouseY)
-    {
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+	protected void renderBg(@NotNull GuiGraphics matrixStack, float partialTicks, int mouseX, int mouseY) {
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, DISPLAY_CASE_GUI);
     	int i = this.leftPos;
     	int j = (this.height - this.imageHeight) / 2;
-    	this.blit(matrixStack, i, j, 0, 0, this.imageWidth, this.imageHeight);
+    	matrixStack.blit(DISPLAY_CASE_GUI, i, j, 0, 0, this.imageWidth, this.imageHeight);
 	}
 
 	@Override
 	public boolean keyPressed(int key, int b, int c)
 	{
 		assert this.minecraft != null;
-		if (key == 256)
+		if (key == GLFW.GLFW_KEY_ESCAPE)
 		{
 			assert this.minecraft.player != null;
 			this.minecraft.player.closeContainer();

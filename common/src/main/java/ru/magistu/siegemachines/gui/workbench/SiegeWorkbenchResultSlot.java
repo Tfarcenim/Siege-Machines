@@ -4,11 +4,9 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.inventory.RecipeHolder;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
-import ru.magistu.siegemachines.item.recipes.ModRecipeSerializers;
 
 public class SiegeWorkbenchResultSlot extends Slot {
     private final CraftingContainer craftSlots;
@@ -57,23 +55,23 @@ public class SiegeWorkbenchResultSlot extends Slot {
      */
     protected void checkTakeAchievements(ItemStack stack) {
         if (this.removeCount > 0) {
-            stack.onCraftedBy(this.player.level, this.player, this.removeCount);
-            net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(this.player, stack, this.craftSlots);
+            stack.onCraftedBy(this.player.level(), this.player, this.removeCount);
+           // net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(this.player, stack, this.craftSlots);
         }
 
-        if (this.container instanceof RecipeHolder) {
+       /* if (this.container instanceof RecipeHolder) {
             ((RecipeHolder)this.container).awardUsedRecipes(this.player);
-        }
+        }*///todo
 
         this.removeCount = 0;
     }
 
     public void onTake(Player player, ItemStack stack) {
         this.checkTakeAchievements(stack);
-        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(player);
-        RecipeManager manager = player.level.getRecipeManager();
-        NonNullList<ItemStack> nonnulllist = manager.getRemainingItemsFor(ModRecipeSerializers.SIEGE_WORKBENCH_RECIPE, craftSlots, player.level);
-        net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
+      //  net.minecraftforge.common.ForgeHooks.setCraftingPlayer(player);
+        RecipeManager manager = player.level().getRecipeManager();
+        NonNullList<ItemStack> nonnulllist = NonNullList.create();//manager.getRemainingItemsFor(ModRecipeSerializers.SIEGE_WORKBENCH_RECIPE, craftSlots, player.level());
+        //net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
         for (int i = 0; i < nonnulllist.size(); ++i) {
             ItemStack itemstack = this.craftSlots.getItem(i);
             ItemStack itemstack1 = nonnulllist.get(i);
@@ -85,7 +83,7 @@ public class SiegeWorkbenchResultSlot extends Slot {
             if (!itemstack1.isEmpty()) {
                 if (itemstack.isEmpty()) {
                     this.craftSlots.setItem(i, itemstack1);
-                } else if (ItemStack.isSame(itemstack, itemstack1) && ItemStack.tagMatches(itemstack, itemstack1)) {
+                } else if (ItemStack.isSameItemSameComponents(itemstack, itemstack1)) {
                     itemstack1.grow(itemstack.getCount());
                     this.craftSlots.setItem(i, itemstack1);
                 } else if (!this.player.getInventory().add(itemstack1)) {

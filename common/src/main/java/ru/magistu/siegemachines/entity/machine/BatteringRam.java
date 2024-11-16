@@ -22,13 +22,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import ru.magistu.siegemachines.util.CartesianGeometry;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
@@ -36,9 +35,7 @@ public class BatteringRam extends Machine implements GeoEntity
 {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
-    static AnimationBuilder MOVING_ANIM = new AnimationBuilder().addAnimation("Moving", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder HITTING_ANIM = new AnimationBuilder().addAnimation("Hitting", ILoopType.EDefaultLoopTypes.LOOP);
-    static AnimationBuilder RELOADING_ANIM = new AnimationBuilder().addAnimation("Reloading", ILoopType.EDefaultLoopTypes.LOOP);
+
 
     public int hittingticks = 0;
     private int wheelssoundticks = 10;
@@ -58,22 +55,22 @@ public class BatteringRam extends Machine implements GeoEntity
         super(entitytype, level, MachineType.BATTERING_RAM);
     }
 
-    private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationEvent<E> event)
+    private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
-        event.getController().setAnimation(MOVING_ANIM);
+        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
 
         return PlayState.CONTINUE;
 	}
 
-    private <E extends IAnimatable> PlayState reloading_predicate(AnimationEvent<E> event)
+    private <E extends IAnimatable> PlayState reloading_predicate(AnimationState<E> event)
     {
         switch (state)
         {
             case HITTING:
-                event.getController().setAnimation(HITTING_ANIM);
+                event.getController().setAnimation(BaseAnimations.HITTING_ANIM);
                 return PlayState.CONTINUE;
             case RELOADING:
-                event.getController().setAnimation(RELOADING_ANIM);
+                event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
                 return PlayState.CONTINUE;
         }
         return PlayState.CONTINUE;
@@ -87,7 +84,7 @@ public class BatteringRam extends Machine implements GeoEntity
             this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
             return wheelspitch += 0.015 * this.wheelsspeed;
         }, this::wheels_predicate);
-		data.addAnimationController(wheels_controller);
+		data.add(wheels_controller);
 
         AnimationController<?> reloading_controller = new AnimationController<>(this, "controller", 1, (t) ->
         {
@@ -97,11 +94,11 @@ public class BatteringRam extends Machine implements GeoEntity
             }
             return t;
         }, this::reloading_predicate);
-		data.addAnimationController(reloading_controller);
+		data.add(reloading_controller);
 	}
 
     @Override
-    public AnimatableInstanceCache getFactory()
+    public AnimatableInstanceCache getAnimatableInstanceCache()
     {
         return this.factory;
     }
