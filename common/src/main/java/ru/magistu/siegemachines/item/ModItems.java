@@ -2,6 +2,7 @@ package ru.magistu.siegemachines.item;
 
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import ru.magistu.siegemachines.SiegeMachines;
@@ -16,11 +17,6 @@ import ru.magistu.siegemachines.entity.machine.*;
 
 public class ModItems
 {
-    public static final CreativeModeTab GROUP_SM = CreativeModeTab.builder(null,-1)
-            .title(Component.translatable(SiegeMachines.ID + ".medieval_siege_machines")).
-            icon(() -> new ItemStack(ModItems.MORTAR.get()))
-            .build();
-
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(SiegeMachines.ID, Registries.ITEM);
 
     public static final RegistrySupplier<Item> MORTAR = ITEMS.register("mortar", () -> new MachineItem<>(new Item.Properties(), ModEntityTypes.MORTAR, () -> MachineType.MORTAR)

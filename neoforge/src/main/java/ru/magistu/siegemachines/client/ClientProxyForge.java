@@ -118,9 +118,13 @@ public class ClientProxyForge {
         ResourceLocation name = ev.getName();
         if (name.equals(VanillaGuiLayers.CROSSHAIR)) {
             LocalPlayer player = Minecraft.getInstance().player;
-            Entity entity = player.getVehicle();
-            if (ClientProxy.CROSSHAIR_FACTORIES.containsKey(entity.getType())) {
-                ev.setCanceled(true);
+            if (player != null) {
+                Entity entity = player.getVehicle();
+                if (entity != null) {
+                    if (ClientProxy.CROSSHAIR_FACTORIES.containsKey(entity.getType())) {
+                        ev.setCanceled(true);
+                    }
+                }
             }
         }
     }
