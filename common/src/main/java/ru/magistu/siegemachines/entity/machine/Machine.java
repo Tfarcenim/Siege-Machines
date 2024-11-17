@@ -88,6 +88,7 @@ public abstract class Machine extends Mob implements MenuProvider
 		builder.define(DATA_TURRET_PITCH,-25f);
 		builder.define(DATA_TURRET_YAW,0f);
 		builder.define(DATA_USE_TICKS,-1);
+		builder.define(DATA_DELAY_TICKS,0);
 	}
 
 	public ItemStack getMachineItemWithData() {
