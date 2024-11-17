@@ -27,7 +27,7 @@ public class SiegeWorkbenchRecipe extends ShapedRecipe {
     }
 
     public SiegeWorkbenchRecipe(ShapedRecipe recipe) {
-        this("dank",recipe.category(), recipe.pattern, recipe.getResultItem(null));
+        this(SiegeMachines.ID,recipe.category(), recipe.pattern, recipe.getResultItem(null));
     }
 
 
@@ -47,12 +47,12 @@ public class SiegeWorkbenchRecipe extends ShapedRecipe {
         return ModRecipeSerializers.SIEGE_WORKBENCH_SERIALIZER.get()  ;
     }
 
-    @Override
+   /* @Override
     @NotNull
     public RecipeType<?> getType() 
     {
         return Type.INSTANCE;
-    }
+    }*/
 
     @Override
     @NotNull

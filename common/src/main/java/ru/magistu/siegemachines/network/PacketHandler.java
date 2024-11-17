@@ -1,12 +1,15 @@
 package ru.magistu.siegemachines.network;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.platform.Services;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PacketHandler {
 
@@ -46,4 +49,11 @@ public class PacketHandler {
             sendTo(packet, player);
         }
     }
+
+
+    public static ResourceLocation packet(Class<?> clazz) {
+        return SiegeMachines.id(clazz.getName().toLowerCase(Locale.ROOT));
+    }
+
+
 }

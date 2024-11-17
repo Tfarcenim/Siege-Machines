@@ -44,7 +44,7 @@ public class GiantArrowRenderer extends EntityRenderer<GiantArrow>
         }
         VertexConsumer ivertexbuilder = buffer.getBuffer(this.model.renderType(this.getTextureLocation(giantarrow)));
         this.model.setupAnim(0.0F, f, f1);
-        this.model.renderToBuffer(matrixstack, ivertexbuilder, n, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        this.model.renderToBuffer(matrixstack, ivertexbuilder, n, OverlayTexture.NO_OVERLAY);
         matrixstack.popPose();
         super.render(giantarrow, p_225623_2_, p_225623_3_, matrixstack, buffer, n);
     }

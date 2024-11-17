@@ -7,13 +7,15 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.entity.machine.SiegeLadder;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class SiegeLadderGeoRenderer extends MachineGeoRenderer<SiegeLadder>
 {
 	public SiegeLadderGeoRenderer(EntityRendererProvider.Context renderManager)
 	{
-		super(renderManager, new MachineModel<>("siege_ladder"));
+		super(renderManager, new DefaultedEntityGeoModel<>(SiegeMachines.id("siege_ladder")));
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class BallistaGeoRenderer extends MachineGeoRenderer<Ballista> {
 		projectile.ifPresent(bone -> bone.setRotX(-animatable.getTurretPitch() * (float) Math.PI / 180.0f));
 		projectile.ifPresent(bone -> bone.setRotY(-animatable.getTurretYaw() * (float) Math.PI / 180.0f));
 		int useticks = animatable.getUseTicks();
-		boolean shouldrender = ((useticks <= 0 && animatable.shootingticks <= 0) || (useticks > 0 && animatable.shootingticks > 0)) && animatable.delayticks <= 0;
+		boolean shouldrender = ((useticks <= 0 && animatable.shootingticks <= 0) || (useticks > 0 && animatable.shootingticks > 0)) && animatable.getDelayTicks() <= 0;
 		int projectilesize = shouldrender && animatable.hasAmmo() ? 1 : 0;
 		projectile.ifPresent(bone -> bone.setScaleX(projectilesize));
 		projectile.ifPresent(bone -> bone.setScaleY(projectilesize));

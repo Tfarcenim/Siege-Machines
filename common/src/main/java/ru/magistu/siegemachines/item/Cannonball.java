@@ -3,6 +3,7 @@ package ru.magistu.siegemachines.item;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3d;
 
@@ -11,10 +12,10 @@ public class Cannonball extends Missile
     public Cannonball(EntityType<Cannonball> type, Level level)
     {
         super(type, level);
-        this.item = ModItems.CANNONBALL.get();
+        this.item = ModItems.CANNONBALL.get().getDefaultInstance();
     }
 
-	public Cannonball(EntityType<Cannonball> entitytype, Level level, Vector3d pos, LivingEntity entity, Item item)
+	public Cannonball(EntityType<Cannonball> entitytype, Level level, Vector3d pos, LivingEntity entity, ItemStack item)
     {
 		super(entitytype, level, pos, entity, MissileType.CANNONBALL, item);
 	}

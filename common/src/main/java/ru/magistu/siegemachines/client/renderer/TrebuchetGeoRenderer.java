@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
+import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.entity.machine.Trebuchet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ public class TrebuchetGeoRenderer extends MachineGeoRenderer<Trebuchet>
 {
 	public TrebuchetGeoRenderer(EntityRendererProvider.Context renderManager)
 	{
-		super(renderManager, new MachineModel<>("trebuchet"));
+		super(renderManager, new DefaultedEntityGeoModel<>(SiegeMachines.id("trebuchet")));
 	}
 
 	@Override
