@@ -6,8 +6,6 @@ import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import ru.magistu.siegemachines.entity.IReloading;
-import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -254,12 +252,6 @@ public class Mortar extends ShootingMachine implements GeoEntity, IReloading
         }
 
         return Vec3.ZERO;
-    }
-
-    @Override
-    public Crosshair createCrosshair()
-    {
-        return new ReloadingCrosshair();
     }
 
     @Override

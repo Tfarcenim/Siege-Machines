@@ -20,7 +20,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.*;
-import ru.magistu.siegemachines.entity.IReloading;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
@@ -31,7 +30,6 @@ import ru.magistu.siegemachines.network.PacketHandler;
 import ru.magistu.siegemachines.network.PacketOpenMachineInventory;
 
 public class ClientProxyForge {
-    public static Crosshair CROSSHAIR = null;
     static LayeredDraw.Layer layer = (guiGraphics, deltaTracker) -> {
         Minecraft mc = Minecraft.getInstance();
         Options settings = mc.options;
@@ -42,17 +40,13 @@ public class ClientProxyForge {
         }
 
         Entity vehicle = player.getVehicle();
-        if (vehicle instanceof IReloading iReloading) {
-                 if (CROSSHAIR == null)
-                     CROSSHAIR = iReloading.createCrosshair();
-
-                CROSSHAIR.render(guiGraphics, deltaTracker, mc, player);
+        Crosshair crosshair = ClientProxy.CROSSHAIR_FACTORIES.get(vehicle.getType());
+        if (crosshair != null) {
+            crosshair.render(guiGraphics, deltaTracker);
         }
-
     };
 
-    public static void setup(IEventBus modEventBus)
-    {
+    public static void setup(IEventBus modEventBus) {
         modEventBus.addListener(ClientProxyForge::clientSetup);
         modEventBus.addListener(ClientProxyForge::registerRenderers);
         modEventBus.addListener(ClientProxyForge::extensions);
@@ -61,7 +55,7 @@ public class ClientProxyForge {
     }
 
     public static void clientSetup(FMLClientSetupEvent event) {
-        ClientProx.setup();
+        ClientProxy.setup();
         NeoForge.EVENT_BUS.addListener(ClientProxyForge::onKeyPressedEvent);
         NeoForge.EVENT_BUS.addListener(ClientProxyForge::onRenderOverlay);
     }
@@ -80,8 +74,7 @@ public class ClientProxyForge {
         }
     }
 
-    public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event)
-    {
+    public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntityTypes.MORTAR.get(), MortarGeoRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.CULVERIN.get(), CulverinGeoRenderer::new);
         event.registerEntityRenderer(ModEntityTypes.TREBUCHET.get(), TrebuchetGeoRenderer::new);
@@ -98,31 +91,24 @@ public class ClientProxyForge {
         event.registerEntityRenderer(ModEntityTypes.SEAT.get(), SeatRenderer::new);
     }
 
-    public static void onKeyPressedEvent(InputEvent.Key ev)
-    {
-        if (KeyBindings.MACHINE_USE.isDown())
-        {
+    public static void onKeyPressedEvent(InputEvent.Key ev) {
+        if (KeyBindings.MACHINE_USE.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.MACHINE_USE)
-            {
+            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.MACHINE_USE) {
                 PacketHandler.sendToServer(new C2SPacketMachineUse());
             }
         }
 
-        if (KeyBindings.LADDER_CLIMB.isDown())
-        {
+        if (KeyBindings.LADDER_CLIMB.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.LADDER_CLIMB)
-            {
+            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.LADDER_CLIMB) {
                 PacketHandler.sendToServer(new C2SPacketMachineUse());
             }
         }
 
-        if (KeyBindings.MACHINE_INVENTORY.isDown())
-        {
+        if (KeyBindings.MACHINE_INVENTORY.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine)
-            {
+            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine) {
                 PacketHandler.sendToServer(new PacketOpenMachineInventory());
             }
         }
@@ -133,24 +119,19 @@ public class ClientProxyForge {
         if (name.equals(VanillaGuiLayers.CROSSHAIR)) {
             LocalPlayer player = Minecraft.getInstance().player;
             Entity entity = player.getVehicle();
-            if (entity instanceof IReloading)
-            {
-           //     if (CROSSHAIR == null)
-           //         CROSSHAIR = ((IReloading) entity).createCrosshair();
-
-            //    CROSSHAIR.render(ev.getPoseStack(), ev.getPartialTick(), mc, player);
+            if (ClientProxy.CROSSHAIR_FACTORIES.containsKey(entity.getType())) {
                 ev.setCanceled(true);
             }
         }
     }
 
     public static void registerOverlay(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, SiegeMachines.id("crosshair"),layer);
+        event.registerAbove(VanillaGuiLayers.CROSSHAIR, SiegeMachines.id("crosshair"), layer);
     }
 
     public static void onKeyRegister(RegisterKeyMappingsEvent ev) {
-            ev.register(KeyBindings.MACHINE_USE);
-            ev.register(KeyBindings.LADDER_CLIMB);
-            ev.register(KeyBindings.MACHINE_INVENTORY);
-        }
+        ev.register(KeyBindings.MACHINE_USE);
+        ev.register(KeyBindings.LADDER_CLIMB);
+        ev.register(KeyBindings.MACHINE_INVENTORY);
+    }
 }

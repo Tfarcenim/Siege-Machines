@@ -11,14 +11,11 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-@OnlyIn(Dist.CLIENT)
 public class GiantArrowRenderer extends EntityRenderer<GiantArrow>
 {
-    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(SiegeMachines.ID, "textures/entity/giant_arrow.png");
+    public static final ResourceLocation TEXTURE_LOCATION = SiegeMachines.id("textures/entity/giant_arrow.png");
 //    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation("textures/entity/projectiles/arrow.png");
 
     public GiantArrowModel model = new GiantArrowModel(GiantArrowModel.createModel());

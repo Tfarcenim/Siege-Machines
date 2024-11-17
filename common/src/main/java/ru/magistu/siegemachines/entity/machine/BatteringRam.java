@@ -1,6 +1,8 @@
 package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -62,7 +64,7 @@ public class BatteringRam extends Machine implements GeoEntity
         return PlayState.CONTINUE;
 	}
 
-    private <E extends IAnimatable> PlayState reloading_predicate(AnimationState<E> event)
+    private <E extends GeoAnimatable> PlayState reloading_predicate(AnimationState<E> event)
     {
         switch (state)
         {
@@ -79,21 +81,21 @@ public class BatteringRam extends Machine implements GeoEntity
     @Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, (t) -> {
+        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, /*(t) -> {
             double d = this.getWheelsSpeed();
             this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
             return wheelspitch += 0.015 * this.wheelsspeed;
-        }, this::wheels_predicate);
+        },*/ this::wheels_predicate);
 		data.add(wheels_controller);
 
-        AnimationController<?> reloading_controller = new AnimationController<>(this, "controller", 1, (t) ->
+        AnimationController<?> reloading_controller = new AnimationController<>(this, "controller", 1,/* (t) ->
         {
             if (this.state.equals(State.RELOADING))
             {
                 return (double) (this.type.specs.delaytime.get() - this.delayticks) / this.type.specs.delaytime.get();
             }
             return t;
-        }, this::reloading_predicate);
+        },*/ this::reloading_predicate);
 		data.add(reloading_controller);
 	}
 
@@ -144,11 +146,15 @@ public class BatteringRam extends Machine implements GeoEntity
     @Override
     public void tick()
     {
-        if (this.useticks != 0 && --this.useticks <= 0)
+        int useticks = getUseTicks();
+        if (useticks > 0)
         {
-            this.state = State.RELOADING;
-            this.useticks = 0;
-            this.delayticks = this.type.specs.delaytime.get();
+            useticks--;
+            if (useticks <=0) {
+                this.state = State.RELOADING;
+                setDelayTicks(this.type.specs.delaytime.get());
+            }
+            setUseTicks(useticks);
         }
 
         if (this.hittingticks != 0 && --this.hittingticks <= 0)
@@ -157,14 +163,14 @@ public class BatteringRam extends Machine implements GeoEntity
             this.hittingticks = 0;
         }
 
-        if (!level.isClientSide() && this.isOnGround())
+        if (!level().isClientSide() && this.onGround())
         {
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.0, 1.0, 0.0));
         }
 
-        if (this.delayticks > 0 && this.isVehicle())
+        if (getDelayTicks() > 0 && this.isVehicle())
         {
-            --this.delayticks;
+            setDelayTicks(getDelayTicks() -1);
         }
 
         if (this.renderupdateticks-- <= 0)
@@ -179,7 +185,7 @@ public class BatteringRam extends Machine implements GeoEntity
             if (Minecraft.getInstance().player == passenger)
             {
                 Vec3 pos = this.position();
-                this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.RAM_WHEELS.get(), this.getSoundSource(), 1.5f, 0.85f + this.level.random.nextFloat() * 0.3f, false);
+                this.level().playLocalSound(pos.x, pos.y, pos.z, ModSoundTypes.RAM_WHEELS.get(), this.getSoundSource(), 1.5f, 0.85f + this.level().random.nextFloat() * 0.3f, false);
                 this.wheelssoundticks = 20;
             }
         }
@@ -214,7 +220,18 @@ public class BatteringRam extends Machine implements GeoEntity
     {
         if (!this.level().isClientSide())
         {
-            Explosion breakdown = new Explosion(this.level(), this, this.getControllingPassenger(), blockpos.getX(), blockpos.getY(), blockpos.getZ(), 2, false, 3.0f, Explosion.BlockInteraction.BREAK);
+            //    public Explosion(
+            //        Level level,
+            //        @Nullable Entity source,
+            //        double x,
+            //        double y,
+            //        double z,
+            //        float radius,
+            //        boolean fire,
+            //        Explosion.BlockInteraction blockInteraction
+            //    )
+            Explosion breakdown = new Explosion(this.level(), this,
+                    blockpos.getX(), blockpos.getY(), blockpos.getZ(), 2, false, Explosion.BlockInteraction.DESTROY);
             breakdown.explode();
             breakdown.finalizeExplosion(true);
         }
@@ -236,7 +253,7 @@ public class BatteringRam extends Machine implements GeoEntity
 
     public double getWheelsSpeed()
     {
-        if (this.isOnGround())
+        if (this.onGround())
         {
             return this.getViewVector(5.0f).multiply(1, 0, 1).dot(this.getDeltaMovement());
         }

@@ -17,8 +17,6 @@ import net.minecraft.world.phys.Vec3;
 import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.entity.IReloading;
-import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -233,12 +231,6 @@ public class Culverin extends ShootingMachine implements GeoEntity, IReloading
         }
 
         return Vec3.ZERO;
-    }
-
-    @Override
-    public Crosshair createCrosshair()
-    {
-        return new ReloadingCrosshair();
     }
 
     @Override

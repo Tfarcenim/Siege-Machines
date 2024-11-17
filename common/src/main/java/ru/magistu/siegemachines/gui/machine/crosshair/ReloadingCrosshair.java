@@ -1,11 +1,12 @@
 package ru.magistu.siegemachines.gui.machine.crosshair;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 
 public class ReloadingCrosshair extends Crosshair
 {
@@ -20,26 +21,24 @@ public class ReloadingCrosshair extends Crosshair
         this.y = Minecraft.getInstance().getWindow().getGuiScaledHeight() / 2;
     }
 
-    public void render(GuiGraphics matrixstack, float ticks, Minecraft mc, Player player)
+    public void render(GuiGraphics matrixstack, DeltaTracker ticks)
     {
-        RenderSystem.assertOnRenderThread();
-
+        LocalPlayer player = Minecraft.getInstance().player;
         if (!player.isPassenger())
         {
             return;
         }
         Entity entity = player.getVehicle();
 
-        if (entity instanceof Machine)
+        if (entity instanceof Machine machine)
         {
-            Machine machine = (Machine) entity;
 
             int width = 11;
             int height = 11;
             int imagex = 0;
             int imagey = 0;
-            int originx = (mc.getWindow().getGuiScaledWidth() - width) / 2;
-            int originy = (mc.getWindow().getGuiScaledHeight() - height) / 2;
+            int originx = (matrixstack.guiWidth() - width) / 2;
+            int originy = (matrixstack.guiHeight() - height) / 2;
             int animationsize = 23;
             if (machine.getUseTicks() > 0)
             {

@@ -17,11 +17,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
 
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -32,19 +32,17 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
-import javax.annotation.Nullable;
-
 public abstract class Missile extends ThrowableItemProjectile
 {
 	public MissileType type = MissileType.STONE;
-	public Item item = ModItems.STONE.get();
+	public ItemStack item = ModItems.STONE.get().getDefaultInstance();
 
 	public Missile(EntityType<? extends Missile> entitytype, Level level)
 	{
 		super(entitytype, level);
 	}
 
-	public Missile(EntityType<? extends Missile> entitytype, Level level, Vector3d pos, LivingEntity entity, MissileType type, Item item)
+	public Missile(EntityType<? extends Missile> entitytype, Level level, Vector3d pos, LivingEntity entity, MissileType type, ItemStack item)
 	{
 		super(entitytype, entity, level);
 		this.type = type;
@@ -55,7 +53,7 @@ public abstract class Missile extends ThrowableItemProjectile
 	@Override
 	public @NotNull Item getDefaultItem()
 	{
-		return this.item;
+		return this.item.getItem();
 	}
 
 	@Override
@@ -77,7 +75,7 @@ public abstract class Missile extends ThrowableItemProjectile
 			else if (this.type.armorpiercing > 0.0f && entity instanceof LivingEntity livingentity)
 			{
 				if(livingentity instanceof Player player) {
-					if(player.isBlocking() && (item == ModItems.GIANT_ARROW.get() || item == Items.ARROW) && (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShieldItem || player.isBlocking() && player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem)) {
+					if(player.isBlocking() && (item.getItem() == ModItems.GIANT_ARROW.get() || item.getItem() == Items.ARROW) && (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShieldItem || player.isBlocking() && player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem)) {
 						return;
 					}
 				}
@@ -199,12 +197,12 @@ public abstract class Missile extends ThrowableItemProjectile
 
 	public MissileExplosion explode(double x, double y, double z, float radius, Explosion.BlockInteraction mode)
 	{
-		return this.explode(null, null, x, y, z, radius, false, mode);
+		return this.explode(x, y, z, radius, false, mode);
 	}
 
-	public MissileExplosion explode(@Nullable DamageSource source, @Nullable ExplosionDamageCalculator context, double x, double y, double z, float size, boolean fired, Explosion.BlockInteraction mode)
+	public MissileExplosion explode(double x, double y, double z, float size, boolean fired, Explosion.BlockInteraction mode)
 	{
-		MissileExplosion explosion = new MissileExplosion(this.level(), this.getOwner(), source, context, x, y, z, size, fired, mode);
+		MissileExplosion explosion = new MissileExplosion(this.level(), this.getOwner(), x, y, z, size, fired, mode);
 	//	if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(level(), explosion)) return explosion;
 		explosion.explode();
 		explosion.finalizeExplosion(true);

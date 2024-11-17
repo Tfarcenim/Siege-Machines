@@ -1,6 +1,7 @@
 package ru.magistu.siegemachines.entity.projectile;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.joml.Vector3d;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
@@ -27,7 +28,7 @@ public class ProjectileBuilder<T extends Projectile>
             new ProjectileBuilder<>(ModItems.GIANT_ARROW.get(), ModEntityTypes.GIANT_ARROW.get(), GiantArrow::new),
             new ProjectileBuilder<>(Items.ARROW, EntityType.ARROW, (entitytype, level, pos, entity, item) ->
             {
-                Arrow arrow = new Arrow(level, entity);
+                Arrow arrow = new Arrow(level, entity,new ItemStack(Items.ARROW),null);
                 arrow.setPos(pos.x, pos.y, pos.z);
                 return arrow;
             })};
@@ -52,6 +53,6 @@ public class ProjectileBuilder<T extends Projectile>
     
     public T build(Level level, Vector3d pos, LivingEntity entity)
     {
-        return this.factory.create(this.entitytype, level, pos, entity, this.item);
+        return this.factory.create(this.entitytype, level, pos, entity, new ItemStack(this.item));
     }
 }

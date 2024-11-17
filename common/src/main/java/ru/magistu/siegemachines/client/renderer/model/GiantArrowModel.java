@@ -38,8 +38,8 @@ public class GiantArrowModel extends Model
 		this.cube_r0.xRot = p_103813_ * ((float)Math.PI / 180F);
 	}
 
-	public void renderToBuffer(PoseStack p_103815_, VertexConsumer p_103816_, int p_103817_, int p_103818_, float p_103819_, float p_103820_, float p_103821_, float p_103822_)
-	{
-		this.cube_r0.render(p_103815_, p_103816_, p_103817_, p_103818_, p_103819_, p_103820_, p_103821_, p_103822_);
+	@Override
+	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
+		//todo	this.cube_r0.render(p_103815_, p_103816_, p_103817_, p_103818_, p_103819_, p_103820_, p_103821_, p_103822_);
 	}
 }

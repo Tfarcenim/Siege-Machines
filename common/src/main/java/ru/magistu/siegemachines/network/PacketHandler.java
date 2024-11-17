@@ -16,7 +16,7 @@ public class PacketHandler {
         Services.PLATFORM.registerClientPlayPacket(S2CPacketMachineUse.TYPE, S2CPacketMachineUse.STREAM_CODEC);
         Services.PLATFORM.registerServerPlayPacket(C2SPacketMachineUse.TYPE, C2SPacketMachineUse.STREAM_CODEC);
         Services.PLATFORM.registerServerPlayPacket(PacketOpenMachineInventory.TYPE,PacketOpenMachineInventory.STREAM_CODEC);
-        Services.PLATFORM.registerClientPlayPacket(PacketMachineInventorySlot.class, PacketMachineInventorySlot::write, PacketMachineInventorySlot::read, PacketMachineInventorySlot.Handler::handle);
+        Services.PLATFORM.registerClientPlayPacket(PacketMachineInventorySlot.TYPE, PacketMachineInventorySlot.STREAM_CODEC);
 
     }
 

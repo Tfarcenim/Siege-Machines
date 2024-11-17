@@ -1,10 +1,9 @@
 package ru.magistu.siegemachines.gui.machine.crosshair;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.GuiGraphics;
 import ru.magistu.siegemachines.SiegeMachines;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
 
 
 public abstract class Crosshair extends HudElement
@@ -16,7 +15,5 @@ public abstract class Crosshair extends HudElement
         super(width, height);
     }
 
-    public final void render(GuiGraphics matrixstack, float partialticks) {}
-
-    public abstract void render(GuiGraphics matrixstack, float ticks, Minecraft mc, Player player);
+    public abstract void render(GuiGraphics matrixstack, DeltaTracker ticks);
 }

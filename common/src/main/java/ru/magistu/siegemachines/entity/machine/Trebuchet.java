@@ -4,8 +4,6 @@ import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.ducks.CommonEntityExtension;
 import ru.magistu.siegemachines.entity.CommonPartEntity;
-import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -241,12 +239,6 @@ public class Trebuchet extends ShootingMachine implements GeoEntity, CommonEntit
         }
 
         super.tick();
-    }
-
-    @Override
-    public Crosshair createCrosshair()
-    {
-        return new ReloadingCrosshair();
     }
 
     @Override

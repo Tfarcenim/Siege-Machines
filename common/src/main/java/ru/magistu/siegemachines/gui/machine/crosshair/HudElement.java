@@ -1,8 +1,6 @@
 package ru.magistu.siegemachines.gui.machine.crosshair;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 
 
 public abstract class HudElement
@@ -67,5 +65,4 @@ public abstract class HudElement
         return this.height;
     }
 
-    public abstract void render(GuiGraphics paramMatrixStack, float paramFloat);
 }

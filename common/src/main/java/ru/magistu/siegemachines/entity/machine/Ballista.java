@@ -2,8 +2,6 @@ package ru.magistu.siegemachines.entity.machine;
 
 import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
-import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
-import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -195,11 +193,6 @@ public class Ballista extends ShootingMachine implements GeoEntity
         }
 
         super.tick();
-    }
-
-    @Override
-    public Crosshair createCrosshair() {
-        return new ReloadingCrosshair();
     }
 
     @Override

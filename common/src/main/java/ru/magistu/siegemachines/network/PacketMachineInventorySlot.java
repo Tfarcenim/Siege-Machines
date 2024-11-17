@@ -2,31 +2,26 @@ package ru.magistu.siegemachines.network;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 
 @ChannelHandler.Sharable
 public record PacketMachineInventorySlot(int entityid, int slot, ItemStack itemstack) implements S2CModPacket<RegistryFriendlyByteBuf> {
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PacketMachineControl> STREAM_CODEC =
-            ModPacket.streamCodec(PacketMachineControl::read);
+    public static final StreamCodec<RegistryFriendlyByteBuf, PacketMachineInventorySlot> STREAM_CODEC =
+            ModPacket.streamCodec(PacketMachineInventorySlot::read);
 
 
-    public static final CustomPacketPayload.Type<PacketMachineControl> TYPE = ModPacket.type(PacketMachineControl.class);
+    public static final CustomPacketPayload.Type<PacketMachineInventorySlot> TYPE = ModPacket.type(PacketMachineInventorySlot.class);
 
-    public static PacketMachineInventorySlot read(FriendlyByteBuf buf)
+    public static PacketMachineInventorySlot read(RegistryFriendlyByteBuf buf)
     {
-        return new PacketMachineInventorySlot(buf.readInt(), buf.readInt(), buf.readItem());
-    }
-
-    public static void write(PacketMachineInventorySlot message, FriendlyByteBuf buf)
-    {
-
+        return new PacketMachineInventorySlot(buf.readInt(), buf.readInt(), ItemStack.STREAM_CODEC.decode(buf));
     }
 
     @Override
@@ -50,7 +45,7 @@ public record PacketMachineInventorySlot(int entityid, int slot, ItemStack items
     public void write(RegistryFriendlyByteBuf buf) {
         buf.writeInt(entityid);
         buf.writeInt(slot);
-        buf.writeItemStack(itemstack, false);
+        ItemStack.STREAM_CODEC.encode(buf,itemstack);
     }
 
     @Override
