@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import ru.magistu.siegemachines.util.BaseAnimations;
@@ -62,6 +61,9 @@ public class Trebuchet extends ShootingMachine implements GeoEntity, CommonEntit
             }
             case RELOADING -> {
                 event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
+                if (!hasControllingPassenger()) {
+                    ((CustomAnimationController<Trebuchet>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
+                }
                 return PlayState.CONTINUE;
             }
             case IDLE_NOT_RELOADED -> {
@@ -117,7 +119,7 @@ public class Trebuchet extends ShootingMachine implements GeoEntity, CommonEntit
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> controller = new AnimationController<>(this, "controller", 1, this::predicate);
+        AnimationController<?> controller = new CustomAnimationController<>(this, "controller", 1, this::predicate);
         data.add(controller);
     }
 
@@ -138,8 +140,6 @@ public class Trebuchet extends ShootingMachine implements GeoEntity, CommonEntit
     @Override
     protected InteractionResult mobInteract(Player player, InteractionHand hand)
     {
-        ItemStack stack = player.getItemInHand(hand);
-
         if (super.mobInteract(player, hand) == InteractionResult.SUCCESS)
         {
             return InteractionResult.SUCCESS;
@@ -245,5 +245,10 @@ public class Trebuchet extends ShootingMachine implements GeoEntity, CommonEntit
     public Item getMachineItem()
     {
         return ModItems.TREBUCHET.get();
+    }
+
+    @Override
+    public double getTick(Object entity) {
+        return state == State.RELOADING ? type.specs.delaytime.get()-getDelayTicks() : GeoEntity.super.getTick(entity);
     }
 }

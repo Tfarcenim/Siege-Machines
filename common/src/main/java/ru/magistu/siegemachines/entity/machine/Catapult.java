@@ -23,8 +23,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class Catapult extends ShootingMachine implements GeoEntity {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
-    //public static final EntityDataAccessor<State> STATE_DATA =
-
     public enum State {
         SHOOTING,
         RELOADING,
@@ -47,10 +45,6 @@ public class Catapult extends ShootingMachine implements GeoEntity {
                 event.getController().setAnimation(BaseAnimations.IDLE_RELOADED_ANIM);
             }
             case RELOADING -> {
-             //   event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
-            //    if (!hasControllingPassenger()) {
-              //      ((CustomAnimationController<Catapult>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
-            //    }
             }
             case IDLE_NOT_RELOADED -> {
                 event.getController().setAnimation(BaseAnimations.IDLE_NOT_RELOADED_ANIM);
@@ -169,10 +163,5 @@ public class Catapult extends ShootingMachine implements GeoEntity {
 
     public float getReloadProgress() {
         return ((float) this.type.specs.delaytime.get() - getDelayTicks())/type.specs.delaytime.get();
-    }
-
-    @Override
-    public double getTick(Object entity) {
-        return GeoEntity.super.getTick(entity);
     }
 }
