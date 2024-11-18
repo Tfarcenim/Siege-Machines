@@ -50,6 +50,6 @@ public record PacketMachineInventorySlot(int entityid, int slot, ItemStack items
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
-        return null;
+        return TYPE;
     }
 }

@@ -35,14 +35,16 @@ public class ClientProxyForge {
         Options settings = mc.options;
         LocalPlayer player = mc.player;
 
-        if ((!settings.hideGui && !player.isReducedDebugInfo() && !settings.reducedDebugInfo().get()) || settings.getCameraType().compareTo(CameraType.FIRST_PERSON) != 0) {
+        if (player == null || settings.hideGui || settings.getCameraType() != CameraType.FIRST_PERSON) {
             return;
         }
 
         Entity vehicle = player.getVehicle();
-        Crosshair crosshair = ClientProxy.CROSSHAIR_FACTORIES.get(vehicle.getType());
-        if (crosshair != null) {
-            crosshair.render(guiGraphics, deltaTracker);
+        if (vehicle != null) {
+            Crosshair crosshair = ClientProxy.CROSSHAIR_FACTORIES.get(vehicle.getType());
+            if (crosshair != null) {
+                crosshair.render(guiGraphics, deltaTracker);
+            }
         }
     };
 
