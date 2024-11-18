@@ -28,6 +28,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Vector3d;
+import ru.magistu.siegemachines.ModTags;
 
 public abstract class Missile extends ThrowableItemProjectile
 {
@@ -90,14 +91,7 @@ public abstract class Missile extends ThrowableItemProjectile
 			BlockHitResult blockRTR = (BlockHitResult)result;
 			BlockPos blockpos = blockRTR.getBlockPos();
 			BlockState blockstate = this.level().getBlockState(blockpos);
-			boolean smoothimpact = (blockstate == Blocks.SAND.defaultBlockState() ||
-					blockstate == Blocks.RED_SAND.defaultBlockState() ||
-					blockstate == Blocks.DIRT.defaultBlockState() ||
-					blockstate == Blocks.GRASS_BLOCK.defaultBlockState() ||
-					blockstate == Blocks.DIRT_PATH.defaultBlockState() ||
-					blockstate == Blocks.COARSE_DIRT.defaultBlockState() ||
-					blockstate == Blocks.SNOW_BLOCK.defaultBlockState()) &&
-					blockRTR.getDirection() == Direction.UP;
+			boolean smoothimpact = blockstate.is(ModTags.Blocks.SMOOTH_IMPACT) && blockRTR.getDirection() == Direction.UP;
 
 			if (blockRTR.getDirection() == Direction.UP)
 			{
