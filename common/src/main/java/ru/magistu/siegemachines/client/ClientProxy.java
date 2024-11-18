@@ -1,9 +1,7 @@
 package ru.magistu.siegemachines.client;
 
-import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.entity.EntityType;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
-import ru.magistu.siegemachines.gui.ModMenuTypes;
 import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
 import ru.magistu.siegemachines.gui.machine.crosshair.ReloadingCrosshair;
 

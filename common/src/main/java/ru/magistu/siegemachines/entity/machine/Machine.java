@@ -40,7 +40,6 @@ import javax.annotation.Nullable;
 public abstract class Machine extends Mob implements MenuProvider
 {
 
-	public KeyMapping usekey;
 	public MachineInventory inventory;
 	public final MachineType type;
 
@@ -64,8 +63,6 @@ public abstract class Machine extends Mob implements MenuProvider
 		this.type = type;
 		setDelayTicks(type.specs.delaytime.get());
 		this.inventory = new MachineInventory(9 * this.type.containerrows);
-		if (level.isClientSide())
-			this.usekey = KeyBindings.getUseKey(type);
 		
 		this.getAttribute(Attributes.MAX_HEALTH).setBaseValue(type.specs.durability.get());
 		this.setHealth(type.specs.durability.get());

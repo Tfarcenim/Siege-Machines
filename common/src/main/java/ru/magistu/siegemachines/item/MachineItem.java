@@ -68,8 +68,7 @@ public class MachineItem<T extends Machine> extends Item implements GeoItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
-        if (KeyBindings.getUseKey(this.machinetype.get()) != null)
-            tooltip.add(Component.translatable(SiegeMachines.ID + ".usage", KeyBindings.getUseKey(this.machinetype.get()).getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
+        tooltip.add(Component.translatable(SiegeMachines.ID + ".usage", KeyBindings.getUseKey(this.machinetype.get()).getTranslatedKeyMessage()).withStyle(ChatFormatting.BLUE));
 
         ProjectileBuilder<?>[] ammo = this.machinetype.get().ammo;
         if (ammo.length > 0)

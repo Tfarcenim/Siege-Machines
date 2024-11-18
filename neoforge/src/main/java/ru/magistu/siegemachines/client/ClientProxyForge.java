@@ -22,6 +22,7 @@ import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.*;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
 import ru.magistu.siegemachines.entity.machine.Machine;
+import ru.magistu.siegemachines.entity.machine.SiegeLadder;
 import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
 import ru.magistu.siegemachines.item.MachineItem;
 import ru.magistu.siegemachines.item.ModItems;
@@ -96,14 +97,14 @@ public class ClientProxyForge {
     public static void onKeyPressedEvent(InputEvent.Key ev) {
         if (KeyBindings.MACHINE_USE.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.MACHINE_USE) {
+            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && !(machine instanceof SiegeLadder)) {
                 PacketHandler.sendToServer(new C2SPacketMachineUse());
             }
         }
 
         if (KeyBindings.LADDER_CLIMB.isDown()) {
             LocalPlayer player = Minecraft.getInstance().player;
-            if (player != null && player.isPassenger() && player.getVehicle() instanceof Machine machine && machine.usekey == KeyBindings.LADDER_CLIMB) {
+            if (player != null && player.isPassenger() && player.getVehicle() instanceof SiegeLadder) {
                 PacketHandler.sendToServer(new C2SPacketMachineUse());
             }
         }
