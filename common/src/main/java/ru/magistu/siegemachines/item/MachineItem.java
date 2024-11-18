@@ -49,7 +49,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class MachineItem<T extends Machine> extends Item implements GeoItem {
-    private final AnimatableInstanceCache factory = GeckoLibUtil  .createInstanceCache(this);
+    private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
     private final Supplier<EntityType<T>> entitytype;
     private final Supplier<MachineType> machinetype;

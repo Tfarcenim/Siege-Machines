@@ -2,13 +2,9 @@ package ru.magistu.siegemachines.item;
 
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import ru.magistu.siegemachines.SiegeMachines;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 
 import ru.magistu.siegemachines.client.renderer.MachineItemGeoRenderer;
 import ru.magistu.siegemachines.client.renderer.model.MachineItemModel;

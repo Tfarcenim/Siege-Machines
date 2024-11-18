@@ -5,7 +5,6 @@ import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import ru.magistu.siegemachines.entity.IReloading;
 import ru.magistu.siegemachines.item.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
@@ -27,8 +26,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class Mortar extends ShootingMachine implements GeoEntity, IReloading
-{
+public class Mortar extends ShootingMachine implements GeoEntity {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
     public int shootingticks = 0;
