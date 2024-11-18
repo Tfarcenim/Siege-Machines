@@ -115,7 +115,7 @@ public abstract class Missile extends ThrowableItemProjectile
 				}
 				if (!this.level().isClientSide())
 				{
-					this.remove(RemovalReason.KILLED);
+					this.discard();
 					if (smoothimpact && this.type.explosive)
 					{
 
@@ -138,12 +138,12 @@ public abstract class Missile extends ThrowableItemProjectile
 			this.level().playSound((Player)this.getOwner(), this.getOnPos(), SoundEvents.ANVIL_BREAK, SoundSource.AMBIENT, 1.0f, 1.0f);
 			if(!this.level().isClientSide())
 			{
-				this.remove(RemovalReason.KILLED);
+				this.discard();
 			}
 		}
 		if (!this.level().isClientSide())
 		{
-			this.remove(RemovalReason.KILLED);
+			this.discard();
 		}
 	}
 

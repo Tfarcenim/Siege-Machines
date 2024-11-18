@@ -45,6 +45,9 @@ public class Catapult extends ShootingMachine implements GeoEntity {
             }
             case RELOADING -> {
                 event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
+                if (!hasControllingPassenger()) {
+                    ((CustomAnimationController<Catapult>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
+                }
             }
             case IDLE_NOT_RELOADED -> {
                 event.getController().setAnimation(BaseAnimations.IDLE_NOT_RELOADED_ANIM);
@@ -56,7 +59,7 @@ public class Catapult extends ShootingMachine implements GeoEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar data) {
-        AnimationController<Catapult> controller = new AnimationController<>(this, "controller", 1, this::predicate);
+        CustomAnimationController<Catapult> controller = new CustomAnimationController<>(this, "controller", 1, this::predicate);
         data.add(controller);
     }
 

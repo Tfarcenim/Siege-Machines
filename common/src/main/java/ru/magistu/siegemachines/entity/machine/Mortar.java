@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.entity.machine;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
 import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
@@ -31,8 +32,9 @@ public class Mortar extends ShootingMachine implements GeoEntity {
 
     public int shootingticks = 0;
 
-    private double wheelspitch = 0.0;
-    private double wheelsspeed = 0.0;
+    public double wheelspitch = 0.0;
+    public double lastwheelpitch;
+    public double wheelsspeed = 0.0;
     private int wheelssoundticks = 10;
 
     public Mortar(EntityType<? extends Mob> entitytype, Level level)
@@ -42,7 +44,12 @@ public class Mortar extends ShootingMachine implements GeoEntity {
 
     private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
     {
-        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
+      //  if (event.isMoving()) {
+     //       event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
+    //        ((CustomAnimationController<Mortar>) event.getController()).setAnimationState(AnimationController.State.RUNNING);
+    //    } else {
+    //        ((CustomAnimationController<Mortar>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
+   //     }
 
         return PlayState.CONTINUE;
     }
@@ -50,13 +57,10 @@ public class Mortar extends ShootingMachine implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
+        AnimationController<Mortar> wheels_controller = new CustomAnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
         data.add(wheels_controller);
     }
-    // (t) -> {
-//            double d = this.getWheelsSpeed();
-//            this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
-//            return wheelspitch += 0.013 * this.wheelsspeed;
+
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache()
@@ -110,7 +114,7 @@ public class Mortar extends ShootingMachine implements GeoEntity {
         {
             if (this.isVehicle())
             {
-                LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+                LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setTurretRotationsDest(livingentity.getXRot(), livingentity.getYRot() - this.getYaw());
                 this.setYawDest(livingentity.getYRot());
@@ -135,6 +139,11 @@ public class Mortar extends ShootingMachine implements GeoEntity {
     @Override
     public void tick()
     {
+
+        wheelsspeed = this.getWheelsSpeed();
+        lastwheelpitch = wheelspitch;
+        wheelspitch += this.wheelsspeed;
+
         int useticks = getUseTicks();
         if (useticks >0) {
             setUseTicks(--useticks);
@@ -188,6 +197,10 @@ public class Mortar extends ShootingMachine implements GeoEntity {
         }
 
         super.tick();
+    }
+
+    public double getLerpedWheelPitch(float partialTick) {
+        return Mth.lerp(partialTick,lastwheelpitch,wheelspitch);
     }
 
     @Override
