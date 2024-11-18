@@ -55,10 +55,7 @@ public abstract class ShootingMachine extends Machine {
         LivingEntity livingentity = this.getControllingPassenger();
         Vec3 shotpos = this.getShotPos();
         Projectile projectile = projectilebuilder.build(this.level(), new Vector3d(shotpos.x, shotpos.y, shotpos.z), livingentity == null ? this : livingentity);
-        if (projectile instanceof Missile missile)
-        {
-            missile.setItem(new ItemStack(missile.getDefaultItem()));
-        }
+
         projectile.shootFromRotation(this, this.getTurretPitch(), this.getGlobalTurretYaw(), 0.0f, (float)(double)this.type.specs.projectilespeed.get(),(float)(double) this.type.specs.inaccuracy.get());
         this.level().addFreshEntity(projectile);
         this.inventory.shrinkItem(projectilebuilder.item);

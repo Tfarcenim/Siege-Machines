@@ -16,8 +16,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ShieldItem;
 
@@ -29,31 +27,22 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 public abstract class Missile extends ThrowableItemProjectile
 {
 	public MissileType type = MissileType.STONE;
-	public ItemStack item = ModItems.STONE.get().getDefaultInstance();
 
 	public Missile(EntityType<? extends Missile> entitytype, Level level)
 	{
 		super(entitytype, level);
 	}
 
-	public Missile(EntityType<? extends Missile> entitytype, Level level, Vector3d pos, LivingEntity entity, MissileType type, ItemStack item)
+	public Missile(EntityType<? extends Missile> entitytype, Level level, Vector3d pos, LivingEntity entity, MissileType type)
 	{
 		super(entitytype, entity, level);
 		this.type = type;
-		this.item = item;
 		this.setPos(pos.x, pos.y, pos.z);
-	}
-
-	@Override
-	public @NotNull Item getDefaultItem()
-	{
-		return this.item.getItem();
 	}
 
 	@Override
@@ -75,7 +64,7 @@ public abstract class Missile extends ThrowableItemProjectile
 			else if (this.type.armorpiercing > 0.0f && entity instanceof LivingEntity livingentity)
 			{
 				if(livingentity instanceof Player player) {
-					if(player.isBlocking() && (item.getItem() == ModItems.GIANT_ARROW.get() || item.getItem() == Items.ARROW) && (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShieldItem || player.isBlocking() && player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem)) {
+					if(player.isBlocking() && (getItem().getItem() == ModItems.GIANT_ARROW.get() || getItem().getItem() == Items.ARROW) && (player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof ShieldItem || player.isBlocking() && player.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem)) {
 						return;
 					}
 				}

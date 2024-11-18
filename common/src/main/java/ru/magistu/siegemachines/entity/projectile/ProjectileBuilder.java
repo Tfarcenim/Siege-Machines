@@ -15,18 +15,18 @@ import net.minecraft.world.item.Items;
 
 public class ProjectileBuilder<T extends Projectile>
 {
-    public final static ProjectileBuilder<Stone> NONE = new ProjectileBuilder<>(Items.AIR, ModEntityTypes.STONE.get(), Stone::new);
+    public final static ProjectileBuilder<Stone> NONE = new ProjectileBuilder<>(Items.AIR, ModEntityTypes.STONE.get(), (entitytype1, level, pos, entity, item1) -> new Stone(entitytype1, level, pos, entity));
 
     public final static ProjectileBuilder<?>[] NO_AMMO = new ProjectileBuilder[]{};
     public final static ProjectileBuilder<?>[] GIANT_THROWING_AMMO = new ProjectileBuilder[]{
-            new ProjectileBuilder<>(Items.COBBLESTONE, ModItems.GIANT_STONE.get(), ModEntityTypes.GIANT_STONE.get(), GiantStone::new)};
+            new ProjectileBuilder<>(Items.COBBLESTONE, ModItems.GIANT_STONE.get(), ModEntityTypes.GIANT_STONE.get(), (entitytype1, level, pos, entity, stack) -> new GiantStone(entitytype1, level, pos, entity))};
     public final static ProjectileBuilder<?>[] CANNON_AMMO = new ProjectileBuilder[]{
-            new ProjectileBuilder<>(ModItems.CANNONBALL.get(), ModEntityTypes.CANNONBALL.get(), Cannonball::new)};
+            new ProjectileBuilder<>(ModItems.CANNONBALL.get(), ModEntityTypes.CANNONBALL.get(), (entitytype1, level, pos, entity, stack) -> new Cannonball(entitytype1, level, pos, entity))};
     public final static ProjectileBuilder<?>[] THROWING_AMMO = new ProjectileBuilder[]{
-            new ProjectileBuilder<>(Items.COBBLESTONE, ModItems.STONE.get(), ModEntityTypes.STONE.get(), Stone::new)};
+            new ProjectileBuilder<>(Items.COBBLESTONE, ModItems.STONE.get(), ModEntityTypes.STONE.get(), (entitytype1, level, pos, entity, item1) -> new Stone(entitytype1, level, pos, entity))};
     public final static ProjectileBuilder<?>[] BALLISTA_AMMO = new ProjectileBuilder[]{
             new ProjectileBuilder<>(ModItems.GIANT_ARROW.get(), ModEntityTypes.GIANT_ARROW.get(), GiantArrow::new),
-            new ProjectileBuilder<>(Items.ARROW, EntityType.ARROW, (entitytype, level, pos, entity, item) ->
+            new ProjectileBuilder<>(Items.ARROW, EntityType.ARROW, (entitytype, level, pos, entity, stack) ->
             {
                 Arrow arrow = new Arrow(level, entity,new ItemStack(Items.ARROW),null);
                 arrow.setPos(pos.x, pos.y, pos.z);
@@ -53,6 +53,6 @@ public class ProjectileBuilder<T extends Projectile>
     
     public T build(Level level, Vector3d pos, LivingEntity entity)
     {
-        return this.factory.create(this.entitytype, level, pos, entity, new ItemStack(this.item));
+        return this.factory.create(this.entitytype, level, pos, entity,new ItemStack(item));
     }
 }
