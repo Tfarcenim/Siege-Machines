@@ -15,7 +15,6 @@ public class MortarGeoModel extends DefaultedEntityGeoModel<Mortar> {
 
     @Override
     public void setCustomAnimations(Mortar animatable, long instanceId, AnimationState<Mortar> animationState) {
-        Optional<GeoBone> bone1 = getBone("Wheels");
         float partialTick = animationState.getPartialTick();
         Optional<GeoBone> bone0 = getBone("Barrel");
         bone0.ifPresent(bone -> {
@@ -23,6 +22,7 @@ public class MortarGeoModel extends DefaultedEntityGeoModel<Mortar> {
             bone.setRotY(-animatable.getTurretYaw(partialTick) * (float) Math.PI / 180.0f);
         });
 
+        Optional<GeoBone> bone1 = getBone("Wheels");
         bone1.ifPresent(bone -> {
             bone.setRotX((float) (-animatable.getLerpedWheelPitch(animationState.getPartialTick())));
         });

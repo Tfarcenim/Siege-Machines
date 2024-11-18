@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.entity.machine;
 
+import net.minecraft.network.syncher.EntityDataAccessor;
 import ru.magistu.siegemachines.ModSoundTypes;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.item.ModItems;
@@ -21,6 +22,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class Catapult extends ShootingMachine implements GeoEntity {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
+
+    //public static final EntityDataAccessor<State> STATE_DATA =
 
     public enum State {
         SHOOTING,
@@ -44,10 +47,10 @@ public class Catapult extends ShootingMachine implements GeoEntity {
                 event.getController().setAnimation(BaseAnimations.IDLE_RELOADED_ANIM);
             }
             case RELOADING -> {
-                event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
-                if (!hasControllingPassenger()) {
-                    ((CustomAnimationController<Catapult>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
-                }
+             //   event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
+            //    if (!hasControllingPassenger()) {
+              //      ((CustomAnimationController<Catapult>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
+            //    }
             }
             case IDLE_NOT_RELOADED -> {
                 event.getController().setAnimation(BaseAnimations.IDLE_NOT_RELOADED_ANIM);
@@ -164,11 +167,12 @@ public class Catapult extends ShootingMachine implements GeoEntity {
         return ModItems.CATAPULT.get();
     }
 
+    public float getReloadProgress() {
+        return ((float) this.type.specs.delaytime.get() - getDelayTicks())/type.specs.delaytime.get();
+    }
+
     @Override
     public double getTick(Object entity) {
-        if (state == State.RELOADING) {
-            return this.type.specs.delaytime.get() - getDelayTicks();
-        }
         return GeoEntity.super.getTick(entity);
     }
 }
