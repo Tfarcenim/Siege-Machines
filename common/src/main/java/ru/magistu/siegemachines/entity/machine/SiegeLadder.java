@@ -1,5 +1,6 @@
 package ru.magistu.siegemachines.entity.machine;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -44,10 +45,10 @@ public class SiegeLadder extends Machine implements GeoEntity
     private final List<LadderSeat> rightseats;
     public final List<LadderSeat> seats;
 
-    private int wheelssoundticks = 10;
-
+    private final int wheelssoundticks = 10;
+    private double lastwheelpitch;
     private double wheelspitch = 0.0;
-    private double wheelsspeed = 0.0;
+
 
     public SiegeLadder(EntityType<? extends Mob> entitytype, Level level)
     {
@@ -69,8 +70,8 @@ public class SiegeLadder extends Machine implements GeoEntity
 
     @Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar data) {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
-		data.add(wheels_controller);
+     //   AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
+	//	data.add(wheels_controller);
 	}
 
     //(t) -> {
@@ -114,7 +115,7 @@ public class SiegeLadder extends Machine implements GeoEntity
         {
             if (this.isVehicle())
             {
-			    LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+			    LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setYawDest(livingentity.getYRot());
 
@@ -135,6 +136,10 @@ public class SiegeLadder extends Machine implements GeoEntity
     @Override
     public void tick()
     {
+
+        lastwheelpitch = wheelspitch;
+        wheelspitch += this.getWheelsSpeed();
+
         if (this.renderupdateticks-- <= 0)
         {
             this.updateMachineRender();
@@ -151,7 +156,12 @@ public class SiegeLadder extends Machine implements GeoEntity
 
         super.tick();
     }
-    
+
+    public double getLerpedWheelPitch(float partialTick) {
+        return Mth.lerp(partialTick,lastwheelpitch,wheelspitch);
+    }
+
+
     public void seatsTick()
     {
         this.leftseats.forEach(seat -> this.updateSeatPosition(seat, true));
@@ -280,5 +290,7 @@ public class SiegeLadder extends Machine implements GeoEntity
     {
 
     }
+
+    //Forge methods, do not remove
 
 }
