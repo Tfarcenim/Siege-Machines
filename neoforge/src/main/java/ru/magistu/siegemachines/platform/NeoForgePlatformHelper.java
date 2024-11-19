@@ -4,8 +4,10 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import ru.magistu.siegemachines.PacketHandlerNeoForge;
+import ru.magistu.siegemachines.mixin.EntityAccessForge;
 import ru.magistu.siegemachines.network.C2SModPacket;
 import ru.magistu.siegemachines.network.S2CModPacket;
 import ru.magistu.siegemachines.platform.services.IPlatformHelper;
@@ -54,4 +56,8 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
         PacketHandlerNeoForge.sendToServer(msg);
     }
 
+    @Override
+    public void onAddedToLevel(Entity entity) {
+        ((EntityAccessForge)entity).setIsAddedToLevel(true);
+    }
 }

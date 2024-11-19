@@ -15,9 +15,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.item.ModItems;
-import ru.magistu.siegemachines.util.BaseAnimations;
+import ru.magistu.siegemachines.platform.Services;
 import ru.magistu.siegemachines.util.CartesianGeometry;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -61,24 +60,9 @@ public class SiegeLadder extends Machine implements GeoEntity
                 .collect(Collectors.toList());
     }
 
-    private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
-    {
-        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
-
-        return PlayState.CONTINUE;
-	}
-
     @Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar data) {
-     //   AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, this::wheels_predicate);
-	//	data.add(wheels_controller);
 	}
-
-    //(t) -> {
-    //            double d = this.getWheelsSpeed();
-    //            this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
-    //            return wheelspitch += 0.015 * this.wheelsspeed;
-    //        }todo
 
     @Override
     public AnimatableInstanceCache getAnimatableInstanceCache()
@@ -193,14 +177,7 @@ public class SiegeLadder extends Machine implements GeoEntity
         super.remove(reason);
     }
 
-/*
-    @Override
-    public void onAddedToWorld()
-    {
-        this.seats.forEach(seat -> this.getLevel().addFreshEntity(seat));
-        
-        super.onAddedToWorld();
-    }*/
+
 
     @Override
     public void use(Player player)
@@ -292,5 +269,9 @@ public class SiegeLadder extends Machine implements GeoEntity
     }
 
     //Forge methods, do not remove
-
+    @SuppressWarnings("unused")
+    public void onAddedToLevel() {
+        Services.PLATFORM.onAddedToLevel(this);
+        this.seats.forEach(seat -> this.level().addFreshEntity(seat));
+    }
 }
