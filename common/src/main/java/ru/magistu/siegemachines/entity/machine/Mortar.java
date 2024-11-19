@@ -34,7 +34,6 @@ public class Mortar extends ShootingMachine implements GeoEntity {
 
     public double wheelspitch = 0.0;
     public double lastwheelpitch;
-    public double wheelsspeed = 0.0;
     private int wheelssoundticks = 10;
 
     public Mortar(EntityType<? extends Mob> entitytype, Level level)
@@ -140,9 +139,8 @@ public class Mortar extends ShootingMachine implements GeoEntity {
     public void tick()
     {
 
-        wheelsspeed = this.getWheelsSpeed();
         lastwheelpitch = wheelspitch;
-        wheelspitch += this.wheelsspeed;
+        wheelspitch += this.getWheelsSpeed();
 
         int useticks = getUseTicks();
         if (useticks >0) {

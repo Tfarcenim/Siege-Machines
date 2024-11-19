@@ -1,8 +1,7 @@
 package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.level.ExplosionDamageCalculator;
+import net.minecraft.util.Mth;
 import ru.magistu.siegemachines.SiegeMachines;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -41,6 +40,7 @@ public class BatteringRam extends Machine implements GeoEntity
 
     public int hittingticks = 0;
     private int wheelssoundticks = 10;
+    public double lastwheelpitch;
 
     public enum State
     {
@@ -50,44 +50,29 @@ public class BatteringRam extends Machine implements GeoEntity
     public State state = State.RELOADING;
 
     private double wheelspitch = 0.0;
-    private double wheelsspeed = 0.0;
 
     public BatteringRam(EntityType<? extends Mob> entitytype, Level level)
     {
         super(entitytype, level, MachineType.BATTERING_RAM);
     }
 
-    private <E extends GeoAnimatable> PlayState wheels_predicate(AnimationState<E> event)
-    {
-        event.getController().setAnimation(BaseAnimations.MOVING_ANIM);
-
-        return PlayState.CONTINUE;
-	}
-
     private <E extends GeoAnimatable> PlayState reloading_predicate(AnimationState<E> event)
     {
-        switch (state)
-        {
-            case HITTING:
+        return switch (state) {
+            case HITTING -> {
                 event.getController().setAnimation(BaseAnimations.HITTING_ANIM);
-                return PlayState.CONTINUE;
-            case RELOADING:
+                yield PlayState.CONTINUE;
+            }
+            case RELOADING -> {
                 event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
-                return PlayState.CONTINUE;
-        }
-        return PlayState.CONTINUE;
-	}
+                yield PlayState.CONTINUE;
+            }
+        };
+    }
 
     @Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1, /*(t) -> {
-            double d = this.getWheelsSpeed();
-            this.wheelsspeed = d > 0 ? Math.min(d, 1.0) : Math.max(d, -1.0);
-            return wheelspitch += 0.015 * this.wheelsspeed;
-        },*/ this::wheels_predicate);
-		data.add(wheels_controller);
-
         AnimationController<?> reloading_controller = new AnimationController<>(this, "controller", 1,/* (t) ->
         {
             if (this.state.equals(State.RELOADING))
@@ -124,7 +109,7 @@ public class BatteringRam extends Machine implements GeoEntity
         {
             if (this.isVehicle())
             {
-			    LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+			    LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setYawDest(livingentity.getYRot());
 
@@ -146,6 +131,9 @@ public class BatteringRam extends Machine implements GeoEntity
     @Override
     public void tick()
     {
+        lastwheelpitch = wheelspitch;
+        wheelspitch += this.getWheelsSpeed();
+
         int useticks = getUseTicks();
         if (useticks > 0)
         {
@@ -191,6 +179,10 @@ public class BatteringRam extends Machine implements GeoEntity
         }
 
         super.tick();
+    }
+
+    public double getLerpedWheelPitch(float partialTick) {
+        return Mth.lerp(partialTick,lastwheelpitch,wheelspitch);
     }
 
     @Override
