@@ -11,7 +11,10 @@
       "count": 1
     },
     "i": {
-      "tag": "c:ingots/iron",
+      "type": "siegemachines:count",
+      "base": {
+        "tag": "c:ingots/iron"
+      },
       "count": 2
     },
     "o": {

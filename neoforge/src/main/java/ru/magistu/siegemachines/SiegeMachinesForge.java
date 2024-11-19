@@ -11,6 +11,7 @@ import ru.magistu.siegemachines.config.SpecsConfig;
 import ru.magistu.siegemachines.datagen.ModDatagen;
 import ru.magistu.siegemachines.entity.machine.*;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
+import ru.magistu.siegemachines.init.IngredientTypes;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(SiegeMachines.ID)
@@ -27,6 +28,7 @@ public class SiegeMachinesForge {
             ClientProxyForge.setup(bus);
         }
 
+        IngredientTypes.register(bus);
         SiegeMachines.init();
     }
 

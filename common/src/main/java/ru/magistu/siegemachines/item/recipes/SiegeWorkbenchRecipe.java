@@ -2,6 +2,7 @@ package ru.magistu.siegemachines.item.recipes;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import ru.magistu.siegemachines.SiegeMachines;
@@ -36,7 +37,12 @@ public class SiegeWorkbenchRecipe extends ShapedRecipe {
         return ModRecipeSerializers.SIEGE_WORKBENCH_SERIALIZER.get()  ;
     }
 
-   /* @Override
+    @Override
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
+        return super.assemble(input, registries);
+    }
+
+    /* @Override
     @NotNull
     public RecipeType<?> getType() 
     {
