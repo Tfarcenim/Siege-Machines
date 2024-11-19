@@ -2,6 +2,7 @@ package ru.magistu.siegemachines.entity.machine;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +29,7 @@ public class Culverin extends ShootingMachine implements GeoEntity {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
     private double wheelspitch = 0.0;
-    private double wheelsspeed = 0.0;
+    private double lastwheelpitch;
     private int wheelssoundticks = 10;
 
     public Culverin(EntityType<? extends Mob> entitytype, Level level)
@@ -49,8 +50,6 @@ public class Culverin extends ShootingMachine implements GeoEntity {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> wheels_controller = new AnimationController<>(this, "wheels_controller", 1 ,this::wheels_predicate);
-        data.add(wheels_controller);
     }
     // (t) -> {
 //            double d = this.getWheelsSpeed();
@@ -109,7 +108,7 @@ public class Culverin extends ShootingMachine implements GeoEntity {
         {
             if (this.isVehicle())
             {
-                LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+                LivingEntity livingentity = this.getControllingPassenger();
 
                 this.setTurretRotationsDest(livingentity.getXRot(), livingentity.getYRot() - this.getYaw());
                 this.setYawDest(livingentity.getYRot());
@@ -130,6 +129,8 @@ public class Culverin extends ShootingMachine implements GeoEntity {
     @Override
     public void tick()
     {
+        lastwheelpitch = wheelspitch;
+        wheelspitch += this.getWheelsSpeed();
         int useticks = getUseTicks();
         if (useticks > 0) {
             setUseTicks(--useticks);
@@ -166,6 +167,10 @@ public class Culverin extends ShootingMachine implements GeoEntity {
         }
 
         super.tick();
+    }
+
+    public double getLerpedWheelPitch(float partialTick) {
+        return Mth.lerp(partialTick,lastwheelpitch,wheelspitch);
     }
 
     @Override

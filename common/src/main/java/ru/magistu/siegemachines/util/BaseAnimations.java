@@ -4,7 +4,7 @@ import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public class BaseAnimations {
-    public static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.PLAY_ONCE);
+    public static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.HOLD_ON_LAST_FRAME);
     public static RawAnimation RELOADING_ANIM = RawAnimation.begin().then("Reloading", Animation.LoopType.HOLD_ON_LAST_FRAME);
     public static RawAnimation IDLE_RELOADED_ANIM = RawAnimation.begin().then("IdleReloaded", Animation.LoopType.LOOP);
     public static RawAnimation IDLE_NOT_RELOADED_ANIM = RawAnimation.begin().then("IdleNotReloaded", Animation.LoopType.LOOP);

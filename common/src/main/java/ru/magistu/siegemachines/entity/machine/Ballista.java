@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -22,8 +23,6 @@ public class Ballista extends ShootingMachine implements GeoEntity
 {
     private final AnimatableInstanceCache factory = GeckoLibUtil.createInstanceCache(this);
 
-    static RawAnimation SHOOTING_ANIM = RawAnimation.begin().then("Shooting", Animation.LoopType.LOOP);
-    static RawAnimation RELOADING_ANIM = RawAnimation.begin().then("Reloading", Animation.LoopType.LOOP);
 
     public enum State
     {
@@ -41,11 +40,14 @@ public class Ballista extends ShootingMachine implements GeoEntity
     {
         switch (state) {
             case SHOOTING -> {
-                event.getController().setAnimation(SHOOTING_ANIM);
+                event.getController().setAnimation(BaseAnimations.SHOOTING_ANIM);
                 return PlayState.CONTINUE;
             }
             case RELOADING -> {
-                event.getController().setAnimation(RELOADING_ANIM);
+                event.getController().setAnimation(BaseAnimations.RELOADING_ANIM);
+                if (!hasControllingPassenger()) {
+                    ((CustomAnimationController<Trebuchet>) event.getController()).setAnimationState(AnimationController.State.PAUSED);
+                }
                 return PlayState.CONTINUE;
             }
         }
@@ -55,7 +57,7 @@ public class Ballista extends ShootingMachine implements GeoEntity
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar data)
     {
-        AnimationController<?> controller = new AnimationController<>(this, "controller", 1, this::predicate);
+        AnimationController<?> controller = new CustomAnimationController<>(this, "controller", 1, this::predicate);
         data.add(controller);
     }
 
@@ -195,9 +197,18 @@ public class Ballista extends ShootingMachine implements GeoEntity
         super.tick();
     }
 
+    public float getReloadProgress() {
+        return ((float) this.type.specs.delaytime.get() - getDelayTicks())/type.specs.delaytime.get();
+    }
+
     @Override
     public Item getMachineItem()
     {
         return ModItems.BALLISTA.get();
+    }
+
+    @Override
+    public double getTick(Object entity) {
+        return state == State.RELOADING ? type.specs.delaytime.get()-getDelayTicks() : GeoEntity.super.getTick(entity);
     }
 }
