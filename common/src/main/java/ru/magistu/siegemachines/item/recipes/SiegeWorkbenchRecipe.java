@@ -31,17 +31,6 @@ public class SiegeWorkbenchRecipe extends ShapedRecipe {
     }
 
 
-    public static class Type implements RecipeType<SiegeWorkbenchRecipe>
-    {
-        public static final Type INSTANCE = new Type();
-        
-        @Override
-        public String toString()
-        {
-            return SiegeWorkbenchRecipe.TYPE_ID.toString();
-        }
-    }
-
     @NotNull
     public RecipeSerializer<?> getSerializer() {
         return ModRecipeSerializers.SIEGE_WORKBENCH_SERIALIZER.get()  ;

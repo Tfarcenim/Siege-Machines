@@ -15,7 +15,7 @@
     }
   },
   "result": {
-    "item": "siegemachines:turret_base",
+    "id": "siegemachines:turret_base",
     "count": 1
   }
 }

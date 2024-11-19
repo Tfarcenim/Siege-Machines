@@ -15,12 +15,12 @@
       "count": 4
     },
     "i": {
-      "tag": "forge:ingots/iron",
+      "tag": "c:ingots/iron",
       "count": 2
     }
   },
   "result": {
-    "item": "siegemachines:counterweight",
+    "id": "siegemachines:counterweight",
     "count": 1
   }
 }

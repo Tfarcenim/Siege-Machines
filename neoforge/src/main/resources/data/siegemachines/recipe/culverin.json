@@ -12,23 +12,23 @@
     },
     "B": {
       "item": "siegemachines:turret_base",
-      "count": 4
+      "count": 7
     },
     "b": {
       "item": "siegemachines:beam",
-      "count": 10
+      "count": 12
     },
     "p": {
       "tag": "minecraft:planks",
       "count": 1
     },
     "i": {
-      "tag": "forge:ingots/iron",
-      "count": 12
+      "tag": "c:ingots/iron",
+      "count": 19
     },
     "l": {
       "item": "minecraft:leather",
-      "count": 2
+      "count": 4
     },
     "w": {
       "item": "siegemachines:wheel",
@@ -36,7 +36,7 @@
     }
   },
   "result": {
-    "item": "siegemachines:mortar",
+    "id": "siegemachines:culverin",
     "count": 1
   }
 }

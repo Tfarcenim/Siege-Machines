@@ -13,8 +13,14 @@ public class ModRecipeSerializers
     public static final DeferredRegister<RecipeSerializer<?>> SERIALIZERS = DeferredRegister.create(SiegeMachines.ID, Registries.RECIPE_SERIALIZER);
     public static final RegistrySupplier<SiegeWorkbenchRecipe.CustomSerializer> SIEGE_WORKBENCH_SERIALIZER = SERIALIZERS.register("siege_workbench", SiegeWorkbenchRecipe.CustomSerializer::new);
 
-    public static RecipeType<SiegeWorkbenchRecipe> SIEGE_WORKBENCH_RECIPE = SiegeWorkbenchRecipe.Type.INSTANCE;
+    public static RecipeType<SiegeWorkbenchRecipe> TYPE = new RecipeType<>() {
+        @Override
+        public String toString() {
+            return SiegeWorkbenchRecipe.TYPE_ID.toString();
+        }
+    };
     
     public static void register() {
+        SERIALIZERS.register();
     }
 }

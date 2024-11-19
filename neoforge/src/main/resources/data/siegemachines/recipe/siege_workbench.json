@@ -16,11 +16,11 @@
       "item": "minecraft:crafting_table"
     },
     "i": {
-      "tag": "forge:ingots/iron"
+      "tag": "c:ingots/iron"
     }
   },
   "result": {
-    "item": "siegemachines:siege_workbench",
+    "id": "siegemachines:siege_workbench",
     "count": 1
   }
 }

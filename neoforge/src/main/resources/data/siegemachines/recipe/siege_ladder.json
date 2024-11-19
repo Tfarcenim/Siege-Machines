@@ -24,7 +24,7 @@
     }
   },
   "result": {
-    "item": "siegemachines:siege_ladder",
+    "id": "siegemachines:siege_ladder",
     "count": 1
   }
 }

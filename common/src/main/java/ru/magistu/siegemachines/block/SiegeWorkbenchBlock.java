@@ -2,17 +2,13 @@ package ru.magistu.siegemachines.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CraftingTableBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.NotNull;
+import ru.magistu.siegemachines.menu.SiegeWorkbenchMenu;
 
 public class SiegeWorkbenchBlock extends CraftingTableBlock
 {
@@ -23,16 +19,11 @@ public class SiegeWorkbenchBlock extends CraftingTableBlock
         super(p_i48422_1_);
     }
 
-    public @NotNull InteractionResult use(@NotNull BlockState blockstate, Level level, @NotNull BlockPos blockpos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult result)
-    {
-        if (level.isClientSide)
-        {
-            return InteractionResult.SUCCESS;
-        }
-        else
-        {
-            player.openMenu(this.getMenuProvider(blockstate, level, blockpos));
-            return InteractionResult.CONSUME;
-        }
+
+    @Override
+    protected MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+        return new SimpleMenuProvider(
+                (p_52229_, p_52230_, p_52231_) -> new SiegeWorkbenchMenu(p_52229_, p_52230_, ContainerLevelAccess.create(level, pos)), CONTAINER_TITLE
+        );
     }
 }

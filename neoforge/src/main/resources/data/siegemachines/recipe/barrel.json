@@ -11,16 +11,16 @@
       "count": 1
     },
     "i": {
-      "tag": "forge:ingots/iron",
+      "tag": "c:ingots/iron",
       "count": 2
     },
     "o": {
-      "tag": "forge:ingots/iron",
+      "tag": "c:ingots/iron",
       "count": 1
     }
   },
   "result": {
-    "item": "siegemachines:barrel",
+    "id": "siegemachines:barrel",
     "count": 1
   }
 }
