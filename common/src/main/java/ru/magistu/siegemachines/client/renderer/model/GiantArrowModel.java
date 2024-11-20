@@ -40,6 +40,8 @@ public class GiantArrowModel extends Model
 
 	@Override
 	public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
-		//todo	this.cube_r0.render(p_103815_, p_103816_, p_103817_, p_103818_, p_103819_, p_103820_, p_103821_, p_103822_);
+//		this.cube_r0.render(p_103815_, p_103816_, p_103817_, p_103818_, p_103819_, p_103820_, p_103821_, p_103822_);
+		this.cube_r0.render(poseStack, buffer, packedLight, packedOverlay, color);
+
 	}
 }

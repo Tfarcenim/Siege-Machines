@@ -14,9 +14,6 @@ public class GiantArrow extends AbstractArrow {
         super(type, level);
     }
 
-
-
-
 	public GiantArrow(EntityType<GiantArrow> entitytype, Level level, Vector3d pos, LivingEntity entity, ItemStack item)
     {
 		super(entitytype, entity, level,item,null);

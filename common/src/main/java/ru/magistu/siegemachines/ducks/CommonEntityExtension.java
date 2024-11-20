@@ -13,7 +13,7 @@ public interface CommonEntityExtension {
      * of their host entity. The child entity does not track its server-side(or client-side) counterpart, and
      * the host entity is responsible for moving and managing these children.
      *
-     * Only used if {@link #isMultipartEntity()} returns true.
+     * Only used if {@link #$isMultipartEntity()} returns true.
      *
      * See {@link EnderDragon} for an example implementation.
      *
