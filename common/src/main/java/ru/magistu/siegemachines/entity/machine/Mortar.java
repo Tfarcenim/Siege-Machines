@@ -20,6 +20,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.Vec3;
+import ru.magistu.siegemachines.network.C2SPacketMachineUse;
+import ru.magistu.siegemachines.network.PacketMachineControl;
+import ru.magistu.siegemachines.platform.Services;
 import ru.magistu.siegemachines.util.BaseAnimations;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -106,9 +109,10 @@ public class Mortar extends ShootingMachine implements GeoEntity {
         return InteractionResult.PASS;
     }
 
+
     @Override
-    public void travel(Vec3 pos)
-    {
+    public void aiStep() {
+        super.aiStep();
         if (this.isAlive())
         {
             if (this.isVehicle())
@@ -120,18 +124,7 @@ public class Mortar extends ShootingMachine implements GeoEntity {
 
                 this.updateYaw();
                 this.updateTurretRotations();
-
-                float f0 = livingentity.xxa * 0.2f;
-                float f1 = livingentity.zza;
-                if (f1 <= 0.0f)
-                {
-                    f1 *= 0.5f;
-                }
-                this.setSpeed(0.04f);
-
-                pos = new Vec3(f0, pos.y, f1);
             }
-            super.travel(pos);
         }
     }
 
@@ -238,7 +231,7 @@ public class Mortar extends ShootingMachine implements GeoEntity {
     {
         if (this.onGround())
         {
-            return this.getViewVector(5.0f).multiply(1, 0, 1).dot(this.getDeltaMovement());
+            return this.getViewVector(.5f).multiply(1, 0, 1).dot(this.getDeltaMovement());
         }
 
         return 0.0;

@@ -57,7 +57,9 @@ public abstract class ShootingMachine extends Machine {
         Vec3 shotpos = this.getShotPos();
         Projectile projectile = projectilebuilder.build(this.level(), new Vector3d(shotpos.x, shotpos.y, shotpos.z), livingentity == null ? this : livingentity);
 
-        projectile.shootFromRotation(this, this.getTurretPitch(), this.getGlobalTurretYaw(), 0.0f, (float)(double)this.type.specs.projectilespeed.get(),(float)(double) this.type.specs.inaccuracy.get());
+        float pitch = getTurretPitch();
+        float yaw = getGlobalTurretYaw();
+        projectile.shootFromRotation(this, pitch, yaw, 0.0f, (float)(double)this.type.specs.projectilespeed.get(),(float)(double) this.type.specs.inaccuracy.get());
         this.level().addFreshEntity(projectile);
         this.inventory.shrinkItem(projectilebuilder.item);
     }

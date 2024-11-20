@@ -296,7 +296,7 @@ public abstract class Machine extends Mob implements MenuProvider
 	{
 		this.turretpitchprev = getTurretPitch();
 		this.turretyawprev = getTurretYaw();
-		entityData.set(DATA_TURRET_PITCH,pitch);
+		setTurretPitch(pitch);
 		entityData.set(DATA_TURRET_YAW,yaw);
 	}
 
