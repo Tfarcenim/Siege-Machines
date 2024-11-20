@@ -20,7 +20,9 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.*;
+import ru.magistu.siegemachines.client.renderer.model.*;
 import ru.magistu.siegemachines.entity.ModEntityTypes;
+import ru.magistu.siegemachines.entity.machine.Ballista;
 import ru.magistu.siegemachines.entity.machine.Machine;
 import ru.magistu.siegemachines.entity.machine.SiegeLadder;
 import ru.magistu.siegemachines.gui.machine.crosshair.Crosshair;
@@ -78,12 +80,12 @@ public class ClientProxyForge {
     }
 
     public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-        event.registerEntityRenderer(ModEntityTypes.MORTAR.get(), MortarGeoRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.CULVERIN.get(), CulverinGeoRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.TREBUCHET.get(), TrebuchetGeoRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.CATAPULT.get(), CatapultGeoRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.BALLISTA.get(), BallistaGeoRenderer::new);
-        event.registerEntityRenderer(ModEntityTypes.BATTERING_RAM.get(), BatteringRamGeoRenderer::new);
+        event.registerEntityRenderer(ModEntityTypes.MORTAR.get(), context -> new MachineGeoRenderer<>(context, new MortarGeoModel(SiegeMachines.id("mortar"))));
+        event.registerEntityRenderer(ModEntityTypes.CULVERIN.get(), context -> new MachineGeoRenderer<>(context, new CulverinGeoModel(SiegeMachines.id("culverin"))));
+        event.registerEntityRenderer(ModEntityTypes.TREBUCHET.get(), context -> new MachineGeoRenderer<>(context, new TrebuchetModel(SiegeMachines.id("trebuchet"))));
+        event.registerEntityRenderer(ModEntityTypes.CATAPULT.get(), context -> new MachineGeoRenderer<>(context, new CatapultGeoModel(SiegeMachines.id("catapult"))));
+        event.registerEntityRenderer(ModEntityTypes.BALLISTA.get(),context -> new MachineGeoRenderer<>(context, new BallistaGeoModel(SiegeMachines.id("ballista"))));
+        event.registerEntityRenderer(ModEntityTypes.BATTERING_RAM.get(),context -> new MachineGeoRenderer<>(context, new BatteringRamGeoModel(SiegeMachines.id("battering_ram"))));
         event.registerEntityRenderer(ModEntityTypes.SIEGE_LADDER.get(), SiegeLadderGeoRenderer::new);
 
         event.registerEntityRenderer(ModEntityTypes.CANNONBALL.get(), ThrownItemRenderer::new);

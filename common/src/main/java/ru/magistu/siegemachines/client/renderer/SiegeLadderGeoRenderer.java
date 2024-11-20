@@ -1,27 +1,17 @@
 package ru.magistu.siegemachines.client.renderer;
 
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.Nullable;
 import ru.magistu.siegemachines.SiegeMachines;
 import ru.magistu.siegemachines.client.renderer.model.SiegeLadderGeoModel;
 import ru.magistu.siegemachines.entity.machine.SiegeLadder;
-import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class SiegeLadderGeoRenderer extends MachineGeoRenderer<SiegeLadder>
 {
 	public SiegeLadderGeoRenderer(EntityRendererProvider.Context renderManager)
 	{
 		super(renderManager, new SiegeLadderGeoModel(SiegeMachines.id("siege_ladder")));
-	}
-
-	@Override
-	public @Nullable RenderType getRenderType(SiegeLadder animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
-		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 
 	@Override
