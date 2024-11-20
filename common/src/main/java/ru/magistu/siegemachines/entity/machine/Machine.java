@@ -43,8 +43,8 @@ public abstract class Machine extends Mob implements MenuProvider
 	public MachineInventory inventory;
 	public final MachineType type;
 
-	protected float turretpitchprev = getTurretPitch();
-	protected float turretpitchdest = getTurretPitch();
+	protected float turretpitchprev = -25;
+	protected float turretpitchdest = -25;
 	protected float turretyawprev = getTurretYaw();
 	protected float turretyawdest = getTurretYaw();
 	protected float yawdest = this.getYRot();
